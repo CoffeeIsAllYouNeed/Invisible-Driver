@@ -5,7 +5,7 @@ import serial
 import time
 
 
-class DataIngestion:
+class DataConnect:
 
     def __init__(self, port="COM6", baudrate=115200):
         self.port = port
@@ -18,16 +18,28 @@ class DataIngestion:
             # Bootloader requires 1-2 seconds.
             # For a safer approach, set the sleep time to 5 seconds.
             time.sleep(5)
+            return self.ser
         except serial.SerialException as e:
             raise RuntimeError(
                 f"Failed to connect to serial port {self.port}: {e}"
             )
 
-    def collect_data_to_csv(
-        self, output_path="data/signal.csv", max_duration_sec=300
-    ):
-        if not self.ser or not self.ser.is_open:
-            self.connect()
+    def close(self):
+        if self.ser and self.ser.is_open:
+            self.ser.close()
+
+
+class DataCollect:
+
+    def __init__(self, connection_manager: DataConnect):
+        self.connection_manager = connection_manager
+
+    def collect(self, output_path="data/signal.csv", max_duration_sec=300):
+        if (
+            not self.connection_manager.ser
+            or not self.connection_manager.ser.is_open
+        ):
+            self.connection_manager.connect()
 
         dir_name = os.path.dirname(output_path)
         if dir_name and not os.path.exists(dir_name):
@@ -47,7 +59,9 @@ class DataIngestion:
                 while time.time() - start_time < max_duration_sec:
                     try:
                         data = (
-                            self.ser.readline().decode("latin-1").strip()
+                            self.connection_manager.ser.readline()
+                            .decode("latin-1")
+                            .strip()
                         )
                     except serial.SerialException as e:
                         raise RuntimeError(
@@ -62,14 +76,27 @@ class DataIngestion:
                     if len(values) > 0 and values[0].isdigit():
                         csvwriter.writerow([current_time, values[0]])
         finally:
-            self.close()
+            self.connection_manager.close()
 
-    def stream_raw_data(self):
-        if not self.ser or not self.ser.is_open:
-            self.connect()
+
+class DataStream:
+
+    def __init__(self, connection_manager: DataConnect):
+        self.connection_manager = connection_manager
+
+    def stream(self):
+        if (
+            not self.connection_manager.ser
+            or not self.connection_manager.ser.is_open
+        ):
+            self.connection_manager.connect()
         while True:
             try:
-                raw_data = self.ser.readline().decode("latin-1").strip()
+                raw_data = (
+                    self.connection_manager.ser.readline()
+                    .decode("latin-1")
+                    .strip()
+                )
                 if raw_data:
                     yield float(raw_data)
             except serial.SerialException as e:
@@ -83,6 +110,21 @@ class DataIngestion:
             except Exception as e:
                 raise RuntimeError(f"Unexpected error during streaming: {e}")
 
+
+class DataIngestion:
+
+    def __init__(self, port="COM6", baudrate=115200):
+        self.connection_manager = DataConnect(port, baudrate)
+        self.collector = DataCollect(self.connection_manager)
+        self.streamer = DataStream(self.connection_manager)
+
+    def collect_data_to_csv(
+        self, output_path="data/signal.csv", max_duration_sec=300
+    ):
+        self.collector.collect(output_path, max_duration_sec)
+
+    def stream_raw_data(self):
+        yield from self.streamer.stream()
+
     def close(self):
-        if self.ser and self.ser.is_open:
-            self.ser.close()
+        self.connection_manager.close()
