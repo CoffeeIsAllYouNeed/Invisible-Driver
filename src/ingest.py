@@ -1,8 +1,8 @@
-import csv
 import datetime
 import os
-import serial
 import time
+import pandas as pd
+import serial
 
 
 class DataConnect:
@@ -34,7 +34,7 @@ class DataCollect:
     def __init__(self, connection_manager: DataConnect):
         self.connection_manager = connection_manager
 
-    def collect(self, output_path="data/signal.csv", max_duration_sec=300):
+    def collect(self, output_path="data/signal.parquet", max_duration_sec=300):
         if (
             not self.connection_manager.ser
             or not self.connection_manager.ser.is_open
@@ -45,36 +45,36 @@ class DataCollect:
         if dir_name and not os.path.exists(dir_name):
             os.makedirs(dir_name, exist_ok=True)
 
+        data_buffer = []
+
         try:
-            with open(
-                output_path, "a", newline="", errors="replace"
-            ) as csvfile:
-                csvwriter = csv.writer(csvfile)
-                if os.stat(output_path).st_size == 0:
-                    csvwriter.writerow(["timestamp", "value"])
+            start_time = time.time()
+            print("Data collection started.")
 
-                start_time = time.time()
-                print("Data collection started.")
-
-                while time.time() - start_time < max_duration_sec:
-                    try:
-                        data = (
-                            self.connection_manager.ser.readline()
-                            .decode("latin-1", errors="ignore")
-                            .strip()
-                        )
-                    except serial.SerialException as e:
-                        raise RuntimeError(
-                            f"Error reading from serial port: {e}"
-                        )
-
-                    current_time = datetime.datetime.now().strftime(
-                        "%Y-%m-%d %H:%M:%S.%f"
+            while time.time() - start_time < max_duration_sec:
+                try:
+                    data = (
+                        self.connection_manager.ser.readline()
+                        .decode("latin-1", errors="ignore")
+                        .strip()
                     )
-                    values = data.split(",")
+                except serial.SerialException as e:
+                    raise RuntimeError(
+                        f"Error reading from serial port: {e}"
+                    )
 
-                    if len(values) > 0 and values[0].replace('.', '', 1).isdigit():
-                        csvwriter.writerow([current_time, values[0]])
+                current_time = datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S.%f"
+                )
+                values = data.split(",")
+
+                if len(values) > 0 and values[0].replace('.', '', 1).isdigit():
+                    data_buffer.append({"timestamp": current_time, "value": values[0]})
+            
+            if data_buffer:
+                df = pd.DataFrame(data_buffer)
+                df.to_parquet(output_path, engine="pyarrow", compression="snappy", index=False)
+
         finally:
             self.connection_manager.close()
 
@@ -115,15 +115,15 @@ class DataStream:
                 raise RuntimeError(f"Unexpected error during streaming: {e}")
 
 
-class DataIngestion:
+class Ingestion:
 
     def __init__(self, port="COM6", baudrate=115200):
         self.connection_manager = DataConnect(port, baudrate)
         self.collector = DataCollect(self.connection_manager)
         self.streamer = DataStream(self.connection_manager)
 
-    def collect_data_to_csv(
-        self, output_path="data/signal.csv", max_duration_sec=300
+    def collect_data_to_parquet(
+        self, output_path="data/signal.parquet", max_duration_sec=300
     ):
         self.collector.collect(output_path, max_duration_sec)
 

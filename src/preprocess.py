@@ -69,7 +69,7 @@ class DataFormat:
         return pivoted_df.reset_index()
 
 
-class DataPreprocess:
+class Preprocess:
 
     def __init__(self):
         self.validator = DataValidate()
