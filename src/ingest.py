@@ -60,7 +60,7 @@ class DataCollect:
                     try:
                         data = (
                             self.connection_manager.ser.readline()
-                            .decode("latin-1")
+                            .decode("latin-1", errors="ignore")
                             .strip()
                         )
                     except serial.SerialException as e:
@@ -73,7 +73,7 @@ class DataCollect:
                     )
                     values = data.split(",")
 
-                    if len(values) > 0 and values[0].isdigit():
+                    if len(values) > 0 and values[0].replace('.', '', 1).isdigit():
                         csvwriter.writerow([current_time, values[0]])
         finally:
             self.connection_manager.close()
@@ -90,15 +90,19 @@ class DataStream:
             or not self.connection_manager.ser.is_open
         ):
             self.connection_manager.connect()
+            
         while True:
             try:
                 raw_data = (
                     self.connection_manager.ser.readline()
-                    .decode("latin-1")
+                    .decode("latin-1", errors="ignore")
                     .strip()
                 )
+                
                 if raw_data:
-                    yield float(raw_data)
+                    actual_val = raw_data.split(",")[0]
+                    yield float(actual_val)
+                    
             except serial.SerialException as e:
                 raise RuntimeError(
                     f"Serial port disconnected during stream: {e}"
