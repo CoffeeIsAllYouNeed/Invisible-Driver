@@ -64,7 +64,7 @@ class FeatureClean:
         return cleaned_pivot, features
 
 
-class DataPreprocess:
+class FeatureEngineer:
 
     def __init__(self):
         self.validator = FeatureValidate()
