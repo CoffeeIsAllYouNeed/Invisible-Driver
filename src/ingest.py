@@ -3,9 +3,29 @@ import os
 import time
 import pandas as pd
 import serial
+from abc import ABC, abstractmethod
 
 
-class DataConnect:
+class DataSource(ABC):
+
+    @abstractmethod
+    def connect(self):
+        pass
+
+    @abstractmethod
+    def read_line(self) -> str:
+        pass
+
+    @abstractmethod
+    def is_open(self) -> bool:
+        pass
+
+    @abstractmethod
+    def close(self) -> None:
+        pass
+
+
+class SerialSource(DataSource):
 
     def __init__(self, port="COM6", baudrate=115200):
         self.port = port
@@ -24,9 +44,76 @@ class DataConnect:
                 f"Failed to connect to serial port {self.port}: {e}"
             )
 
-    def close(self):
+    def read_line(self) -> str:
+        if self.ser and self.ser.is_open:
+            return self.ser.readline().decode("latin-1", errors="ignore").strip()
+        return ""
+
+    def is_open(self) -> bool:
+        return self.ser is not None and self.ser.is_open
+
+    def close(self) -> None:
         if self.ser and self.ser.is_open:
             self.ser.close()
+
+
+class FileSource(DataSource):
+
+    def __init__(self, filepath="data/signal.parquet"):
+        self.filepath = filepath
+        self.generator = None
+        self._is_connected = False
+
+    def connect(self):
+        if not os.path.exists(self.filepath):
+            raise FileNotFoundError(f"Mock data file not found at: {self.filepath}")
+        df = pd.read_parquet(self.filepath)
+        self.generator = (str(val) for val in df["value"].values)
+        self._is_connected = True
+
+    def read_line(self) -> str:
+        try:
+            if self.generator:
+                return next(self.generator)
+        except StopIteration:
+            pass
+        return ""
+
+    def is_open(self) -> bool:
+        return self._is_connected
+
+    def close(self) -> None:
+        self._is_connected = False
+        self.generator = None
+
+
+class SourceProvider:
+
+    @staticmethod
+    def create_source(source_type: str, **kwargs) -> DataSource:
+        if source_type.lower() == "serial":
+            return SerialSource(
+                port=kwargs.get("port", "COM6"),
+                baudrate=kwargs.get("baudrate", 115200)
+            )
+        elif source_type.lower() == "file":
+            return FileSource(
+                filepath=kwargs.get("filepath", "data/signal.parquet")
+            )
+        else:
+            raise ValueError(f"Unknown source type: {source_type}")
+
+
+class DataConnect:
+
+    def __init__(self, source_type: str = "serial", **kwargs):
+        self.source = SourceProvider.create_source(source_type, **kwargs)
+
+    def connect(self):
+        return self.source.connect()
+
+    def close(self):
+        self.source.close()
 
 
 class DataCollect:
@@ -35,10 +122,7 @@ class DataCollect:
         self.connection_manager = connection_manager
 
     def collect(self, output_path="data/signal.parquet", max_duration_sec=300):
-        if (
-            not self.connection_manager.ser
-            or not self.connection_manager.ser.is_open
-        ):
+        if not self.connection_manager.source.is_open():
             self.connection_manager.connect()
 
         dir_name = os.path.dirname(output_path)
@@ -53,11 +137,7 @@ class DataCollect:
 
             while time.time() - start_time < max_duration_sec:
                 try:
-                    data = (
-                        self.connection_manager.ser.readline()
-                        .decode("latin-1", errors="ignore")
-                        .strip()
-                    )
+                    data = self.connection_manager.source.read_line()
                 except serial.SerialException as e:
                     raise RuntimeError(
                         f"Error reading from serial port: {e}"
@@ -79,25 +159,18 @@ class DataCollect:
             self.connection_manager.close()
 
 
-class DataStream:
+class RawValueYieldStream:
 
     def __init__(self, connection_manager: DataConnect):
         self.connection_manager = connection_manager
 
     def stream(self):
-        if (
-            not self.connection_manager.ser
-            or not self.connection_manager.ser.is_open
-        ):
+        if not self.connection_manager.source.is_open():
             self.connection_manager.connect()
             
         while True:
             try:
-                raw_data = (
-                    self.connection_manager.ser.readline()
-                    .decode("latin-1", errors="ignore")
-                    .strip()
-                )
+                raw_data = self.connection_manager.source.read_line()
                 
                 if raw_data:
                     actual_val = raw_data.split(",")[0]
@@ -117,10 +190,10 @@ class DataStream:
 
 class Ingestion:
 
-    def __init__(self, port="COM6", baudrate=115200):
-        self.connection_manager = DataConnect(port, baudrate)
+    def __init__(self, source_type: str = "serial", **kwargs):
+        self.connection_manager = DataConnect(source_type, **kwargs)
         self.collector = DataCollect(self.connection_manager)
-        self.streamer = DataStream(self.connection_manager)
+        self.streamer = RawValueYieldStream(self.connection_manager)
 
     def collect_data_to_parquet(
         self, output_path="data/signal.parquet", max_duration_sec=300

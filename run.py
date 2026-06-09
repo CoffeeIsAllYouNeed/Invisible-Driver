@@ -73,14 +73,14 @@ class KeyboardController:
 
 class Run:
 
-    def __init__(self, port: str = "COM6", baudrate: int = 115200, 
-                 storage_path: str = "data/signal.parquet", 
-                 batch_duration_sec: int = 2):
+    def __init__(self, source_type: str = "serial", port: str = "COM6", baudrate: int = 115200, 
+                 storage_path: str = "data/signal.parquet", batch_duration_sec: int = 2):
         
         self.storage_path = storage_path
         self.batch_duration_sec = batch_duration_sec
         
-        self.ingestion_system = Ingestion(port=port, baudrate=baudrate)
+        # Updated to match the factory initialization signature
+        self.ingestion_system = Ingestion(source_type=source_type, port=port, baudrate=baudrate, filepath=storage_path)
         self.preprocess_pipeline = Preprocess()
         self.feature_pipeline = FeatureEngineer()
         self.model_pipeline = Predict()
