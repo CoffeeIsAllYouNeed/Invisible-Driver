@@ -18,7 +18,7 @@
 "Invisible Driver" is a BCI project, in which you can drive video-game cars using brain's EEG signals.
 </p>
 
-## Hardware 
+### Hardware 
 
 | Component | Image | Quantity |
 | :--- | :---: | :---: |
@@ -33,3 +33,9 @@
 | **Electrode Gel** *(If using Brain BioAmp Band)* | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1vwdu5_kiqXnaBjBTfNPYy9Il8SrIOLQX5w&s" alt="Electrode Gel" height="200"/> | 1 |
 
 ---
+
+### Software 
+
+* **Arduino IDE**
+* **Visual Studio Code**
+* **Google Colab**
