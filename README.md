@@ -30,6 +30,6 @@
 | **Nuprep Skin Gel** | <img src="https://5.imimg.com/data5/SELLER/Default/2023/11/359233054/ZL/BR/TB/6317077/nuprep-skin-prep-gel.jpg" alt="Nuprep Gel" height="200"/> | 1 |
 | **Wet wipe** | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsv88h91KOPFHaZ2LRVbLFBsSklgK8cKsKKw&s" alt="Wet Wipe" height="200"/> | 1 |
 | **Brain BioAmp Band** *(Optional)* | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSStS1rGSGPOKB8LvksVjaPrnp_PpdSBoJcw&s" alt="Brain BioAmp Band" height="200"/> | 1 |
-| **Electrode Gel** <br>*(If using Brain BioAmp Band)* | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1vwdu5_kiqXnaBjBTfNPYy9Il8SrIOLQX5w&s" alt="Electrode Gel" height="200"/> | 1 |
+| **Electrode Gel** *(If using Brain BioAmp Band)* | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1vwdu5_kiqXnaBjBTfNPYy9Il8SrIOLQX5w&s" alt="Electrode Gel" height="200"/> | 1 |
 
 ---
