@@ -14,4 +14,6 @@
   <img src="https://img.shields.io/badge/Contributions-Welcome-blue?style=flat" alt="Contributions Welcome" />
 </p>
 
+<p align="center">
 "Invisible Driver" is a BCI project, in which you can drive video-game cars using brain's EEG signals.
+</p>
