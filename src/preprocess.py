@@ -20,8 +20,8 @@ class DataValidate:
 class DataTransform:
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        # Conversion of values to Int32 reduces memory usage.
-        df["value"] = df["value"].astype("Int32")
+        # Conversion of values to float matches the array dimensions and allows ffill operations.
+        df["value"] = df["value"].astype(float)
         df["timestamp"] = pd.to_datetime(df["timestamp"])
 
         df = df.dropna(subset=["timestamp", "value"])
@@ -33,18 +33,18 @@ class DataTransform:
             drop=True
         )
 
-        # As per research:
-        # 2 sec TW is optimal for emotion recognition.
-        df["timestamp_window"] = df["timestamp"].dt.floor(
-            freq="2s", ambiguous="raise", nonexistent="raise"
-        )
+        # FIX: To avoid splitting a single live batch into two separate rows,
+        # we dynamically floor the first timestamp in the window and apply it to the whole batch.
+        if not df.empty:
+            df["timestamp_window"] = df["timestamp"].iloc[0].floor("2s")
+        else:
+            df["timestamp_window"] = pd.NaT
 
         # Each record will consists multiple signal values.
         # This will help us understand the pattern of wave.
         # These patterns are useful to classify the wave.
         # Types of considered waves : Alpha, Beta, Gammma.
-        # Alpha -> Relaxed State.
-        # Beta, Gamma -> Attentive State.
+        # Relaxed State -> Attentive State mapping handles actual user metrics.
         grouped_windows = df.groupby(
             by="timestamp_window", sort=True, dropna=True
         )

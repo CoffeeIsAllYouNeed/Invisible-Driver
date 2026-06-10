@@ -78,13 +78,41 @@ class ModelPredict:
         self.scaler = scaler
         self.model = model
         self.label_meanings = label_meanings
+        self.c_centers = {}
+
+        # Extract core components from trained model for live proximity classification
+        if self.model.components_.size > 0:
+            core_features = self.model.components_
+            core_labels = self.model.labels_[self.model.core_sample_indices_]
+            
+            # Pre-calculate the coordinate centers of the stable clusters (0 and 1)
+            for cluster in [0, 1]:
+                mask = (core_labels == cluster)
+                if np.any(mask):
+                    self.c_centers[cluster] = np.mean(core_features[mask], axis=0)
 
     def predict(self, features: pd.DataFrame) -> list:
         if features.empty:
             return []
-        scaled = self.scaler.transform(features)
-        labels = self.model.fit_predict(scaled)
-        return [self.label_meanings.get(L, "Noise/Unknown") for L in labels]
+
+        # Step 1: Scale using the clean historical training parameters
+        scaled_features = self.scaler.transform(features)
+        
+        # Fall back gracefully to unknown if cluster patterns don't exist
+        if not self.c_centers:
+            return ["Noise/Unknown"] * len(features)
+
+        # Step 2: Map points to the nearest cluster center using Euclidean Norm
+        output_predictions = []
+        for point in scaled_features:
+            assigned_cluster = min(
+                self.c_centers.keys(), 
+                key=lambda c: np.linalg.norm(point - self.c_centers[c])
+            )
+            meaning = self.label_meanings.get(assigned_cluster, "Noise/Unknown")
+            output_predictions.append(meaning)
+            
+        return output_predictions
 
 
 class Predict:
@@ -106,13 +134,17 @@ class Predict:
 
     def fit_and_save_pipeline(self, df_pivot: pd.DataFrame, features: pd.DataFrame) -> None:
         try:
-            scaler, features_scaled = self.scaler_component.scale(features)
+            # Drop 'cluster_id' explicitly if it was appended prior to saving, 
+            # ensuring the scaler is fit only on clean raw features.
+            clean_features = features.drop(columns=["cluster_id"], errors="ignore")
+
+            scaler, features_scaled = self.scaler_component.scale(clean_features)
             dbscan, labels = self.trainer.train(features_scaled)
 
             if not self.validator.validate(labels):
                 return
 
-            zcr_means, label_meanings = self.labeler.map_labels(features, labels)
+            zcr_means, label_meanings = self.labeler.map_labels(clean_features, labels)
 
             artifacts = {
                 "scaler": scaler,

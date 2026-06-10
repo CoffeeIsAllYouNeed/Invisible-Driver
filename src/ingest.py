@@ -67,7 +67,14 @@ class FileSource(DataSource):
     def connect(self):
         if not os.path.exists(self.filepath):
             raise FileNotFoundError(f"Mock data file not found at: {self.filepath}")
-        df = pd.read_parquet(self.filepath)
+        
+        if self.filepath.endswith(".csv"):
+            df = pd.read_csv(self.filepath)
+            if "value" not in df.columns and len(df.columns) > 0:
+                df = df.rename(columns={df.columns[0]: "value"})
+        else:
+            df = pd.read_parquet(self.filepath)
+            
         self.generator = (str(val) for val in df["value"].values)
         self._is_connected = True
 

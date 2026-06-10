@@ -1,10 +1,15 @@
+"""
+ML Pipeline execution script.
+Handles data ingestion from hardware or file streams, runs data processing,
+feature engineering, and performs live inferences within 2-second time windows.
+"""
+
+import datetime
 import os
-import sys
-import threading
 import time
 import pandas as pd
-import pyautogui
 
+# Explicit required import syntax
 from src import (
     Ingestion,
     Preprocess,
@@ -13,151 +18,100 @@ from src import (
     Reproducible,
 )
 
+# ==========================================
+# CONFIGURATION OPTION
+# Option "a" : Test using hardware (Serial port)
+# Option "b" : Fetch data from data/data.csv
+# ==========================================
+OPTION = "b"
 
-class DataFetch:
-
-    def __init__(self, filepath: str, batch_duration_sec: int = 2):
-        self.filepath = filepath
-        self.batch_duration_sec = batch_duration_sec
-        self.last_read_timestamp = None
-
-    def fetch_latest_batch(self) -> pd.DataFrame:
-        try:
-            # Ensure the file doesn't require special permissions to access.
-            # If so, it will return False.
-            if not os.path.exists(self.filepath):
-                return pd.DataFrame()
-            
-            # pyarrow to enable multithreading. 
-            full_df = pd.read_parquet(self.filepath, engine="pyarrow")
-
-            # Return empty df for type consistency.
-            # Empty files are handled in preprocessing.
-            if full_df.empty:
-                return pd.DataFrame()
-
-            full_df["timestamp"] = pd.to_datetime(full_df["timestamp"])
-
-            # Quicksort has low time complexity and space complexity.
-            # TIME COMPLEXITY: O(nlogn)
-            # SPACE COMPLEXITY: O(logn)
-            full_df = full_df.sort_values(by="timestamp", kind="quicksort").reset_index(drop=True)
-
-            latest_time = full_df["timestamp"].iloc[-1]
-
-            if self.last_read_timestamp is None:
-                start_window = latest_time - pd.Timedelta(seconds=self.batch_duration_sec)
-            else:
-                start_window = self.last_read_timestamp
-
-            batch = full_df[
-                (full_df["timestamp"] >= start_window)
-                & (full_df["timestamp"] <= latest_time)
-            ]
-
-            self.last_read_timestamp = latest_time
-            return batch
-
-        except Exception:
-            return pd.DataFrame()
+# Pipeline paths
+MODEL_PATH = "model/model.pkl"
+DATA_CSV_PATH = "data/data.csv"
+TIME_WINDOW_SEC = 2.0
 
 
-class KeyboardController:
+def main() -> None:
+    # 1. Initialize Pipeline Reproducibility
+    reproducible_pipeline = Reproducible()
+    reproducible_pipeline.set_seed(42)
 
-    def trigger_action(self, duration: float = 2.0) -> None:
-        # 'W' key is used for acceleration in the game.
-        pyautogui.keyDown('w')
-        time.sleep(duration)
-        pyautogui.keyUp('w')
+    # 2. Configure Ingestion Pipeline Stream
+    if OPTION == "a":
+        print("Starting pipeline: Ingesting from Hardware (Serial Stream)...")
+        ingestion = Ingestion(source_type="serial", port="COM6", baudrate=115200)
+    elif OPTION == "b":
+        print("Starting pipeline: Ingesting from File (data/data.csv)...")
+        ingestion = Ingestion(source_type="file", filepath=DATA_CSV_PATH)
+    else:
+        raise ValueError(f"Unknown pipeline option: '{OPTION}'. Select 'a' or 'b'.")
 
+    # 3. Instantiate Architecture Steps
+    preprocess_layer = Preprocess()
+    feature_layer = FeatureEngineer()
+    prediction_layer = Predict()
 
-class Run:
+    # Pre-load prediction engine with weights from pickle
+    prediction_layer.load_prediction_engine(model_path=MODEL_PATH)
 
-    def __init__(self, source_type: str = "serial", port: str = "COM6", baudrate: int = 115200, 
-                 storage_path: str = "data/signal.parquet", batch_duration_sec: int = 2):
-        
-        self.storage_path = storage_path
-        self.batch_duration_sec = batch_duration_sec
-        
-        # Updated to match the factory initialization signature
-        self.ingestion_system = Ingestion(source_type=source_type, port=port, baudrate=baudrate, filepath=storage_path)
-        self.preprocess_pipeline = Preprocess()
-        self.feature_pipeline = FeatureEngineer()
-        self.model_pipeline = Predict()
-        
-        self.fetcher = DataFetch(self.storage_path, self.batch_duration_sec)
-        self.keyboard = KeyboardController()
-        self.reproducibility_manager = Reproducible()
-        
-        self.ingestion_thread = None
-        self.is_running = False
+    print(f"\n--- Running Pipeline Inferences (Window: {TIME_WINDOW_SEC}s) ---")
 
-    def _process_workflow(self, raw_df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-        pivoted = self.preprocess_pipeline.preprocess(raw_df)
-        _, features = self.feature_pipeline.preprocess(pivoted)
-        return pivoted, features
+    try:
+        raw_stream = ingestion.stream_raw_data()
 
-    def _background_ingestion(self):
-       
-        try:
-            self.ingestion_system.collect_data_to_parquet(
-                output_path=self.storage_path, 
-                max_duration_sec=300
-            )
-        except Exception:
-            self.is_running = False
+        while True:
+            window_buffer = []
+            window_start_time = time.time()
 
-    def execute(self):
-        self.reproducibility_manager.set_seed(42)
-
-        if os.path.exists(self.storage_path):
-            try:
-                os.remove(self.storage_path)
-            except Exception:
-                pass
-
-        self.is_running = True
-        self.ingestion_thread = threading.Thread(target=self._background_ingestion, daemon=True)
-        self.ingestion_thread.start()
-
-        # Prevents a race condition by giving the background thread time to start.
-        # Allows the hardware microcontroller 5 seconds to reset and initialize.
-        # Allows 1 second for initial sensor data to be written to disk.
-        # Prevents the training step from crashing on a missing or empty file.
-        time.sleep(6) 
-
-        try:
-            raw_train_df = pd.read_parquet(self.storage_path)
-            pivoted, features = self._process_workflow(raw_train_df)
-            self.model_pipeline.fit_and_save_pipeline(pivoted, features)
-            self.model_pipeline.load_prediction_engine()
-        except Exception:
-            self.ingestion_system.close()
-            sys.exit(1)
-
-        try:
-            while self.is_running:
-                time.sleep(self.batch_duration_sec)
-                
-                batch = self.fetcher.fetch_latest_batch()
-                if batch.empty or len(batch) < 10:
-                    continue
-
+            # Precisely aggregate data for the length of the 2-second time window
+            while time.time() - window_start_time < TIME_WINDOW_SEC:
                 try:
-                    pivoted_batch, batch_features = self._process_workflow(batch)
-                    predictions = self.model_pipeline.predict_batch(batch_features)
-
-                    if any(pred == "beta, gamma" for pred in predictions):
-                        self.keyboard.trigger_action()
-
-                except Exception:
+                    val = next(raw_stream)
+                    current_ts = datetime.datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    window_buffer.append({"timestamp": current_ts, "value": val})
+                except StopIteration:
+                    # Stream complete (applicable to data file loops)
+                    if not window_buffer:
+                        print("Data stream complete. Exiting pipeline loop.")
+                        return
+                    break
+                except Exception as stream_err:
+                    print(f"Skipping corrupt streaming frame: {stream_err}")
                     continue
-        except KeyboardInterrupt:
-            pass
-        finally:
-            self.ingestion_system.close()
+
+            if not window_buffer:
+                time.sleep(0.1)
+                continue
+
+            try:
+                # Pack buffered window into structured DataFrame
+                input_df = pd.DataFrame(window_buffer)
+
+                # Step 1: Preprocess (Validate, transform window, pivot long-to-wide format)
+                pivoted_df = preprocess_layer.preprocess(input_df)
+
+                # Step 2: Feature Engineering (Calculate ZCR & Variance across divisions)
+                _, feature_df = feature_layer.preprocess(pivoted_df)
+
+                # Step 3: Inference Prediction (Load, Scale, DBSCAN clustering)
+                # This works seamlessly now that the scaler is fit cleanly on your raw features matrix!
+                predictions = prediction_layer.predict_batch(feature_df)
+
+                # Print predictions output
+                timestamp_str = datetime.datetime.now().strftime("%H:%M:%S")
+                print(f"[{timestamp_str}] Window Predictions: {predictions}")
+
+            except Exception as pipeline_err:
+                print(f"Pipeline calculation batch skipped: {pipeline_err}")
+
+    except KeyboardInterrupt:
+        print("\nPipeline execution stopped manually.")
+    finally:
+        ingestion.close()
+        print("Pipeline streaming channels disconnected.")
 
 
 if __name__ == "__main__":
-    runner = Run()
-    runner.execute()
+    main()

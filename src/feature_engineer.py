@@ -5,9 +5,11 @@ import pandas as pd
 class FeatureValidate:
 
     def validate(self, X: np.ndarray) -> None:
-        if X.shape[0] == 0 or X.shape[1] <= 1:
+        # A 2-second window requires enough samples to split into 4 parts (for 0.5s sub-windows).
+        # Hence, we validate that we have a minimum threshold of sequential readings.
+        if X.shape[0] == 0 or X.shape[1] <= 4:
             raise ValueError(
-                "Insufficient sampling frequency."
+                "Insufficient sampling frequency inside this time window block."
             )
 
 
@@ -16,7 +18,7 @@ class FeatureExtract:
     def extract(
         self, X: np.ndarray, X_center: np.ndarray, df_pivot: pd.DataFrame
     ) -> pd.DataFrame:
-        # Alpha, Beta, Gamma waves are identifies by the nature of their fluctuations.
+        # Alpha, Beta, Gamma waves are identified by the nature of their fluctuations.
         # Variance captures the intensity of these fluctuations.
         # ZCR captures the frequency of these fluctuations.
         features = pd.DataFrame(
@@ -75,7 +77,8 @@ class FeatureEngineer:
         self, df_pivot: pd.DataFrame
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         try:
-            signal_columns = df_pivot.drop(columns=["timestamp_window"])
+            # Drop the timestamp metadata safely to isolate numerical signal columns
+            signal_columns = df_pivot.drop(columns=["timestamp_window"], errors="ignore")
             X = signal_columns.values
 
             self.validator.validate(X)
