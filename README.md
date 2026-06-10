@@ -25,7 +25,7 @@
 | **BioAmp EXG Pill** (with JST PH 2.0 connector and a header pin) | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRym-b7jiaqVdCK8e1-iBQ-Gms5bbz7WaoacA&s" alt="BioAmp EXG Pill" height="200"/> | 1 |
 | **BioAmp Cable v3** | <img src="https://store.upsidedownlabs.tech/wp-content/uploads/2022/11/1-1.jpg" alt="BioAmp Cable v3" height="200"/> | 1 |
 | **Gel Electrodes** | <img src="https://shop.openbci.com/cdn/shop/files/kendall-35mm.jpg?v=1694030384" alt="Gel Electrodes" height="200"/> | 3 |
-| **Jumper Cables** | <img src="https://probots.co.in/male-to-female-jumper-wires-40-pcs-20cm.html" alt="Jumper Cables" height="200"/> | 3 |
+| **Jumper Cables** | <img src="https://store.arduino.cc/cdn/shop/files/TPX00159_01.front_05719685-eb39-4977-8a01-1641461536c3_500x309.jpg?v=1771603575" alt="Jumper Cables" height="200"/> | 3 |
 | **Arduino Uno / Maker Uno with USB Cable** *(Or any microcontroller board with an ADC)* | <img src="https://robu-prod-media.s3.ap-south-1.amazonaws.com/uploads/2015/11/4-1.jpg" alt="Arduino Uno" height="200"/> | 1 |
 | **Nuprep Skin Preparation Gel** | <img src="https://5.imimg.com/data5/SELLER/Default/2023/11/359233054/ZL/BR/TB/6317077/nuprep-skin-prep-gel.jpg" alt="Nuprep Gel" height="200"/> | 1 |
 | **Wet wipe** | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsv88h91KOPFHaZ2LRVbLFBsSklgK8cKsKKw&s" alt="Wet Wipe" height="200"/> | 1 |
