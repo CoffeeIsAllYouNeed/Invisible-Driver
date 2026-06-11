@@ -132,28 +132,32 @@ Invisible-Driver/
 ├── data/                    # Stores sample data & live data.
 │   ├── data.csv             # Sample 5 min data for simulation.
 │   └── signal.parquet       # Live data.
-├── docs/                    # documentation. 
+├── docs/                    # documentation.
+│   ├── eeg.md               # documentation for EEG signal processing.
 │   ├── feature_engineer.md  # documentation for feature engineering.
+│   ├── hardware.md          # documentation for hardware setup and microcontrollers.
 │   ├── ingestion.md         # documentation for data ingestion.
+│   ├── pipeline.md          # documentation for the overall system pipeline.
 │   ├── predict.md           # documentation for model training.
 │   ├── preprocess.md        # documentation for data preprocessing.
-│   └── reproducible.md      # documentation for reproducible results.
+│   ├── reproducible.md      # documentation for reproducible results.
+│   └── UPDATES.md           # Updates documentation.
 ├── hardware/                # hardware scripts.
 │   └── eeg.ino              # Arduino C++ sketch for live EEG data fetch.
 ├── img/                     # Assets.
-│   └── header.png           
+│   └── header.png
 ├── model/                   # Stores pre-trained models.
 │   └── model.pkl            # Pre-trained unsupervised model.
 ├── src/                     # Pipeline modules.
-│   ├── __init__.py          
+│   ├── **init**.py
 │   ├── feature_engineer.py  # Pipeline step: Feature engineering.
 │   ├── ingest.py            # Pipeline step: Data ingestion.
 │   ├── prediction.py        # Pipeline step: Model training.
 │   ├── preprocess.py        # Pipeline step: Data preprocessing.
 │   └── reproducible.py      # Pipeline step: Reproducibility.
-├── templates/               
+├── templates/
 │   └── ui.html              # Racing car UI
-├── .gitignore               
+├── .gitignore
 ├── LICENSE                  # Open-source MIT distribution terms
 ├── prediction.ipynb         # Unsupervised model.
 ├── README.md                # Project overview.
