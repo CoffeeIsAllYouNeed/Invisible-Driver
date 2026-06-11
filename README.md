@@ -18,11 +18,11 @@
 "Invisible Driver" is a BCI project, in which you can drive video-game cars using brain's EEG signals.
 </p>
 
-### Hardware 
+### Hardware:  
 
 | Component | Image | Quantity |
 | :--- | :---: | :---: |
-| **BioAmp EXG Pill** *( (with JST PH 2.0 connector and a header pin))* | <img src="https://5.imimg.com/data5/SELLER/Default/2025/3/496928027/TL/KJ/FM/156942136/bioamp-exg-pill-unassembled-record-publication-grade-ecg-emg-eog-or-eeg.jpg" alt="BioAmp EXG Pill" height="200"/> | 1 |
+| **BioAmp EXG Pill** *(with JST PH 2.0 connector and a header pin)* | <img src="https://5.imimg.com/data5/SELLER/Default/2025/3/496928027/TL/KJ/FM/156942136/bioamp-exg-pill-unassembled-record-publication-grade-ecg-emg-eog-or-eeg.jpg" alt="BioAmp EXG Pill" height="200"/> | 1 |
 | **BioAmp Cable v3** | <img src="https://store.upsidedownlabs.tech/wp-content/uploads/2022/11/1-1.jpg" alt="BioAmp Cable v3" height="200"/> | 1 |
 | **Gel Electrodes** | <img src="https://shop.openbci.com/cdn/shop/files/kendall-35mm.jpg?v=1694030384" alt="Gel Electrodes" height="200"/> | 3 |
 | **Jumper Cables** | <img src="https://store.arduino.cc/cdn/shop/files/TPX00159_01.front_05719685-eb39-4977-8a01-1641461536c3_500x309.jpg?v=1771603575" alt="Jumper Cables" height="200"/> | 3 |
@@ -34,7 +34,7 @@
 
 ---
 
-### Software 
+### Software: 
 
 * **Arduino IDE**
 * **Visual Studio Code**
@@ -42,7 +42,7 @@
 
 ---
 
-### Hardware connection
+### Hardware connection steps: 
 
 #### Step 1: Assembly
 If your BioAmp EXG Pill did not come pre-soldered, solder the header pins and the JST PH 2.0 connector onto the board.
@@ -87,12 +87,12 @@ Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno
 
 ---
 
-### Software steps
+### Software connection steps: 
 
 #### Step 1: Clone the Repository
 
 ```bash
-git clone [https://github.com/CoffeeIsAllYouNeed/Invisible-Driver.git](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver.git)
+git clone https://github.com/CoffeeIsAllYouNeed/Invisible-Driver 
 cd Invisible-Driver
 
 ```
@@ -121,5 +121,45 @@ uvicorn server:app --reload --port 8000
 #### Step 5: Navigate to the Game Platform to Drive with Brain
 
 Navigate: **`http://127.0.0.1:8000`**
+
+---
+
+### Directoty structure: 
+
+```text
+Invisible-Driver/
+├── .vscode/                 # Editor configuration settings.
+├── data/                    # Stores sample data & live data.
+│   ├── data.csv             # Sample 5 min data for simulation.
+│   └── signal.parquet       # Live data.
+├── docs/                    # documentation. 
+│   ├── feature_engineer.md  # documentation for feature engineering.
+│   ├── ingestion.md         # documentation for data ingestion.
+│   ├── predict.md           # documentation for model training.
+│   ├── preprocess.md        # documentation for data preprocessing.
+│   └── reproducible.md      # documentation for reproducible results.
+├── hardware/                # hardware scripts.
+│   └── eeg.ino              # Arduino C++ sketch for live EEG data fetch.
+├── img/                     # Assets.
+│   └── header.png           
+├── model/                   # Stores pre-trained models.
+│   └── model.pkl            # Pre-trained unsupervised model.
+├── src/                     # Pipeline modules.
+│   ├── __init__.py          
+│   ├── feature_engineer.py  # Pipeline step: Feature engineering.
+│   ├── ingest.py            # Pipeline step: Data ingestion.
+│   ├── prediction.py        # Pipeline step: Model training.
+│   ├── preprocess.py        # Pipeline step: Data preprocessing.
+│   └── reproducible.py      # Pipeline step: Reproducibility.
+├── templates/               
+│   └── ui.html              # Racing car UI
+├── .gitignore               
+├── LICENSE                  # Open-source MIT distribution terms
+├── prediction.ipynb         # Unsupervised model.
+├── README.md                # Project overview.
+├── requirements.txt         # Dependencies.
+├── run.py                   # Pipeline run file.
+├── server.py                # FastAPI server.
+└── UPDATES.md               # Updates documentation.
 
 ---
