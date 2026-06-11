@@ -124,7 +124,7 @@ Navigate: **`http://127.0.0.1:8000`**
 
 ---
 
-### Directoty structure: 
+### Directory structure: 
 
 ```text
 Invisible-Driver/
@@ -161,5 +161,9 @@ Invisible-Driver/
 ├── run.py                   # Pipeline run file.
 ├── server.py                # FastAPI server.
 └── UPDATES.md               # Updates documentation.
-
+```
 ---
+
+### Wanna Chat?: 
+
+* [My LinkedIn](https://www.linkedin.com/in/vrushal-more-2a5067330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
