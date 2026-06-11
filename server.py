@@ -1,12 +1,12 @@
 import asyncio
 import os
 import json
+import random
 import datetime
 import pandas as pd
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 
-# Import your unified architecture components
 from src.ingest import Ingestion
 from src.preprocess import Preprocess
 from src.feature_engineer import FeatureEngineer
@@ -105,13 +105,21 @@ async def pipeline_websocket(websocket: WebSocket):
                     if predictions:
                         final_prediction = predictions[0] # Dynamic single string output
                         
-                        # Route state outcomes directly to UI action triggers
-                        if final_prediction == "Attentive State":
-                            cognitive_state = "ATTENTIVE"
-                            action_signal = "ACCELERATE"
-                        else:
+                        # --- RANDOM OVERRIDE MECHANISM ---
+                        # 30% chance to drop into a forced random relaxed interval 
+                        # completely ignoring the model output for testing purposes
+                        if random.random() < 0.30:
                             cognitive_state = "RELAXED"
                             action_signal = "NONE"
+                            print("🎲 RANDOMIZER: Intermittent Relaxed interval forced!")
+                        else:
+                            # Route authentic ML state outcomes directly to UI action triggers
+                            if final_prediction == "Attentive State":
+                                cognitive_state = "ATTENTIVE"
+                                action_signal = "ACCELERATE"
+                            else:
+                                cognitive_state = "RELAXED"
+                                action_signal = "NONE"
 
                         payload = {
                             "signal": window_buffer[-1]["value"], # Send last known raw value

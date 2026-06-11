@@ -2,26 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EEG Car Racing Controls Dashboard</title>
+    <title>EEG Focus Engine Racing Interface</title>
     <style>
+        :root {
+            --bg-base: #0c0c0e;
+            --bg-surface: #16161a;
+            --bg-card: #1e1e24;
+            --border-glow: #2a2a35;
+            --text-main: #f4f4f7;
+            --text-muted: #8a8a98;
+            --accent-cyan: #00ffcc;
+            --accent-blue: #3b82f6;
+            --accent-red: #ff3355;
+        }
+
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1e1e24;
-            color: #fff;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-base);
+            color: var(--text-main);
             display: flex;
             height: 100vh;
             overflow: hidden;
         }
 
-        /* Left Side: Car Racing Track Layout */
+        /* Left Side: Circular Track & Speedometer Panel */
         #track-container {
-            width: 40%;
-            background: #1a1a1c;
-            border-right: 5px dashed #ffd700;
+            width: 45%;
+            background: radial-gradient(circle at center, #1a1a24 0%, #0c0c0e 100%);
+            border-right: 1px solid var(--border-glow);
             position: relative;
             display: flex;
             justify-content: center;
+            align-items: center;
             overflow: hidden;
         }
 
@@ -36,70 +49,126 @@
 
         /* Right Side: Configuration Control Panel */
         #control-panel {
-            width: 60%;
+            width: 55%;
             padding: 40px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            background: #282830;
+            background: var(--bg-surface);
             box-sizing: border-box;
-            gap: 15px;
+            gap: 24px;
+            overflow-y: auto;
         }
 
-        h2 { color: #00ffcc; border-bottom: 2px solid #444; padding-bottom: 10px; margin-top: 0; }
+        .panel-header h2 { 
+            color: var(--accent-cyan); 
+            margin: 0 0 6px 0; 
+            font-size: 26px; 
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        .panel-header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
 
-        .btn-group { display: flex; gap: 20px; margin: 10px 0; }
+        .btn-group { display: flex; gap: 16px; margin: 5px 0; }
 
         button {
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
+            flex: 1;
+            padding: 14px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid transparent;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             color: #fff;
         }
 
-        .btn-hardware { background: #e67e22; }
-        .btn-hardware:hover { background: #d35400; box-shadow: 0 0 10px rgba(230,126,34,0.5); }
-
-        .btn-simulation { background: #3498db; }
-        .btn-simulation:hover { background: #2980b9; box-shadow: 0 0 10px rgba(52,152,219,0.5); }
-
-        button:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
-
-        #metrics-display {
-            background: #1a1a1f;
-            padding: 20px;
-            border-radius: 8px;
-            border-left: 5px solid #00ffcc;
+        .btn-hardware { 
+            background: linear-gradient(135deg, #e67e22, #d35400); 
+            border-color: #f39c12;
+        }
+        .btn-hardware:hover:not(:disabled) { 
+            box-shadow: 0 0 20px rgba(230,126,34,0.4);
+            transform: translateY(-1px);
         }
 
-        .metric { font-size: 18px; margin: 10px 0; }
-        .highlight { font-weight: bold; color: #ffd700; }
+        .btn-simulation { 
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-color: #5dade2;
+        }
+        .btn-simulation:hover:not(:disabled) { 
+            box-shadow: 0 0 20px rgba(52,152,219,0.4);
+            transform: translateY(-1px);
+        }
+
+        button:disabled { 
+            background: #24242b !important; 
+            border-color: #2d2d36 !important;
+            color: #555562 !important;
+            cursor: not-allowed; 
+            box-shadow: none !important;
+            transform: none !important;
+        }
+
+        /* Clean Glassmorphic Metrics HUD Cards */
+        #metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: #1d1d24;
+            border: 1px solid #2d2d38;
+            padding: 16px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .metric-card .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .metric-card .card-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Custom Dynamic Colored States */
+        .state-attentive { color: var(--accent-cyan) !important; }
+        .state-relaxed { color: var(--accent-blue) !important; }
 
         /* Modernized Signal Trace Window Viewport */
         .chart-window {
             flex: 1;
-            background: #111115;
-            border-radius: 8px;
-            border: 1px solid #3c3c44;
+            background: #0c0c0e;
+            border-radius: 12px;
+            border: 1px solid #23232a;
             position: relative;
-            min-height: 200px;
+            min-height: 220px;
             overflow: hidden;
-            margin-top: 10px;
         }
         #chartCanvas { width: 100%; height: 100%; display: block; }
         .chart-label {
             position: absolute;
-            top: 12px;
+            top: 15px;
             left: 15px;
             font-size: 11px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.08em;
-            color: #8a8a93;
+            color: var(--text-muted);
             z-index: 10;
         }
     </style>
@@ -111,19 +180,29 @@
     </div>
 
     <div id="control-panel">
-        <h2>EEG Focus Engine Racing Interface</h2>
-        <p style="margin: 0; color: #b0b0bc;">Select your data pipeline ingestion configuration protocol below to initialize tracking:</p>
+        <div class="panel-header">
+            <h2>EEG Focus Engine Racing Interface</h2>
+            <p>Select your data pipeline ingestion configuration protocol below to initialize tracking:</p>
+        </div>
         
         <div class="btn-group">
-            <button class="btn-hardware" id="btn-hw" onclick="startStream('serial')">(a) Testing Using Hardware</button>
-            <button class="btn-simulation" id="btn-sim" onclick="startStream('file')">(b) Run Live Simulation File</button>
+            <button class="btn-hardware" id="btn-hw" onclick="startStream('serial')">Initialize Hardware Ingest</button>
+            <button class="btn-simulation" id="btn-sim" onclick="startStream('file')">Run Telemetry Simulation</button>
         </div>
 
-        <div id="metrics-display">
-            <h3 style="margin-top: 0; color: #00ffcc;">Live Telemetry Status</h3>
-            <div class="metric">Current Mental State: <span id="lbl-state" class="highlight">Awaiting Stream...</span></div>
-            <div class="metric">Car Engine Vector: <span id="lbl-action" class="highlight">Stationary</span></div>
-            <div class="metric">Pipeline Raw Value: <span id="lbl-signal" class="highlight">---</span></div>
+        <div id="metrics-grid">
+            <div class="metric-card" style="border-left: 3px solid var(--accent-cyan);">
+                <div class="card-title">Cognitive State</div>
+                <div id="lbl-state" class="card-value">Awaiting...</div>
+            </div>
+            <div class="metric-card" style="border-left: 3px solid var(--accent-blue);">
+                <div class="card-title">Engine Response</div>
+                <div id="lbl-action" class="card-value">Stationary</div>
+            </div>
+            <div class="metric-card" style="border-left: 3px solid #ffd700;">
+                <div class="card-title">EEG Vector Stream</div>
+                <div id="lbl-signal" class="card-value">---</div>
+            </div>
         </div>
 
         <div class="chart-window">
@@ -133,7 +212,6 @@
     </div>
 
     <script>
-        // Setup Canvas elements
         const trackCanvas = document.getElementById("trackCanvas");
         const trackCtx = trackCanvas.getContext("2d");
         const chartCanvas = document.getElementById("chartCanvas");
@@ -143,23 +221,27 @@
 
         // --- RIGID TIME-WINDOW PHYSICS CONTROLLER ---
         let currentCarState = "RELAXED";
-        let stateEndTime = 0; // Epoch timeline anchor for 2-second overrides
+        let stateEndTime = 0; 
         
         let velocity = 0;
-        const targetMaxSpeed = 16;
+        const targetMaxSpeed = 45; // Enhanced scalar range display for speedometer output
         const targetMinSpeed = 0;
-        let roadScrollPosition = 0;
+        
+        // Circular Track Orbit Configuration Values
+        let carAngle = 0; 
 
         // Car visual properties
-        let carColor = "#ff3333";
-        let carGlowRadius = 15;
-        let carGlowColor = "rgba(255, 51, 51, 0.8)";
+        let carColor = varStyle('--accent-red');
+        let carGlowColor = "rgba(255, 51, 85, 0.5)";
 
         // --- LIVE SIGNAL MEMORY WINDOW ---
         let eegBuffer = [];
-        const maxDataPoints = 180; // Optimal width allocation balance
+        const maxDataPoints = 180;
 
-        // Window Resizer Event Listener to keep coordinate mapping matrices flawless
+        function varStyle(name) {
+            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
         function resizeCanvases() {
             trackCanvas.width = trackCanvas.parentElement.clientWidth;
             trackCanvas.height = trackCanvas.parentElement.clientHeight;
@@ -172,7 +254,7 @@
         function startStream(modeSelection) {
             document.getElementById('btn-hw').disabled = true;
             document.getElementById('btn-sim').disabled = true;
-            document.getElementById('lbl-state').innerText = "Initializing Stream Architecture...";
+            document.getElementById('lbl-state').innerText = "Initializing...";
             
             eegBuffer = [];
             stateEndTime = 0;
@@ -181,7 +263,6 @@
             ws = new WebSocket(`ws://${window.location.host}/pipeline_stream`);
 
             ws.onopen = function() {
-                console.log("WebSocket connected.");
                 ws.send(JSON.stringify({ "command": "START", "mode": modeSelection }));
             };
 
@@ -189,140 +270,186 @@
                 const data = JSON.parse(event.data);
                 
                 if (data.status === "complete") {
-                    document.getElementById('lbl-state').innerText = "Stream Completed.";
+                    document.getElementById('lbl-state').innerText = "Completed";
                     resetControls();
                     return;
                 }
 
-                // 1. Log Raw Stream metrics
-                document.getElementById('lbl-state').innerText = data.state;
-                document.getElementById('lbl-action').innerText = data.action;
-                document.getElementById('lbl-signal').innerText = data.signal ? Number(data.signal).toFixed(2) : "---";
+                // Update text metrics UI cleanly
+                const stateEl = document.getElementById('lbl-state');
+                stateEl.innerText = data.state;
+                stateEl.className = "card-value " + (data.state === "ATTENTIVE" ? "state-attentive" : "state-relaxed");
+                
+                document.getElementById('lbl-action').innerText = data.action === "ACCELERATE" ? "THRUST" : "COASTING";
+                document.getElementById('lbl-signal').innerText = data.signal ? Number(data.signal).toFixed(1) : "---";
 
-                // 2. Accumulate Signal Trace Arrays 
                 if (data.signal !== undefined) {
                     eegBuffer.push(Number(data.signal));
                     if (eegBuffer.length > maxDataPoints) eegBuffer.shift();
                 }
 
-                // 3. Evaluate 2-Second State Window Timing 
                 if (data.state) {
                     const now = performance.now();
                     if (data.state !== currentCarState) {
                         currentCarState = data.state;
-                        stateEndTime = now + 2000; // Force-lock state context trajectory window for 2.0 seconds
+                        stateEndTime = now + 2000; // Keep continuous for 2 seconds
                     }
                 }
             };
 
             ws.onclose = () => { resetControls(); };
-            ws.onerror = (err) => { console.error(err); resetControls(); };
+            ws.onerror = (err) => { resetControls(); };
         }
 
         function resetControls() {
             document.getElementById('btn-hw').disabled = false;
             document.getElementById('btn-sim').disabled = false;
             document.getElementById('lbl-action').innerText = "Stationary";
-            document.getElementById('lbl-state').innerText = "Awaiting Stream...";
+            const stateEl = document.getElementById('lbl-state');
+            stateEl.innerText = "Awaiting...";
+            stateEl.className = "card-value";
             currentCarState = "RELAXED";
             stateEndTime = 0;
         }
 
-        // --- CORE GAME ARCHITECTURE INTERPOLATION ENGINE ---
+        // --- CANVAS GAME LOOP: CIRCULAR TRACK & DIGITAL SPEEDOMETER ---
         function updateAndRenderGame() {
             const now = performance.now();
 
-            // Calculate the color scheme adjustments and current vector states based on active state window
+            // Handle Physics Transitions
             if (now < stateEndTime) {
                 if (currentCarState === "ATTENTIVE") {
-                    velocity += (targetMaxSpeed - velocity) * 0.04; // Smooth asset acceleration
-                    carColor = "#00ffcc";
-                    carGlowColor = "rgba(0, 255, 204, 0.9)";
-                    carGlowRadius = 25;
+                    velocity += (targetMaxSpeed - velocity) * 0.05;
+                    carColor = varStyle('--accent-cyan');
+                    carGlowColor = "rgba(0, 255, 204, 0.6)";
                 } else {
-                    velocity += (targetMinSpeed - velocity) * 0.06; // Active engine brake deceleration
-                    carColor = "#ff3333";
-                    carGlowColor = "rgba(255, 51, 51, 0.8)";
-                    carGlowRadius = 15;
+                    velocity += (targetMinSpeed - velocity) * 0.08;
+                    carColor = varStyle('--accent-red');
+                    carGlowColor = "rgba(255, 51, 85, 0.4)";
                 }
             } else {
-                // Decay curves when stream packets are delayed or absent
                 if (currentCarState === "ATTENTIVE") {
                     velocity += (targetMaxSpeed - velocity) * 0.01;
                 } else {
-                    velocity *= 0.96;
+                    velocity *= 0.95;
                 }
             }
 
-            roadScrollPosition += velocity * 1.5;
+            // Translate velocity into angular orbital steps around the circle
+            carAngle += (velocity * 0.0015);
 
-            // Clear road window viewport
+            const centerX = trackCanvas.width / 2;
+            const centerY = trackCanvas.height / 2;
+            const trackRadius = Math.min(trackCanvas.width, trackCanvas.height) * 0.34;
+
             trackCtx.clearRect(0, 0, trackCanvas.width, trackCanvas.height);
 
-            // Draw Road surface base
-            trackCtx.fillStyle = "#222226";
-            trackCtx.fillRect(0, 0, trackCanvas.width, trackCanvas.height);
-
-            // Draw scrolling dash markers array matching velocity
-            trackCtx.strokeStyle = "#ffffff";
-            trackCtx.lineWidth = 4;
-            trackCtx.setLineDash([35, 45]);
-            trackCtx.lineDashOffset = -roadScrollPosition;
-
+            // 1. Draw Outer Glowing Ring Border Lane
+            trackCtx.strokeStyle = "#22222d";
+            trackCtx.lineWidth = 42;
             trackCtx.beginPath();
-            trackCtx.moveTo(trackCanvas.width / 2, 0);
-            trackCtx.lineTo(trackCanvas.width / 2, trackCanvas.height);
+            trackCtx.arc(centerX, centerY, trackRadius, 0, Math.PI * 2);
             trackCtx.stroke();
-            trackCtx.setLineDash([]); // Reset line configurations style matrix
 
-            // Render Professional F1 Sprite geometry silhouette configurations
-            const carW = 54;
-            const carH = 95;
-            const carX = (trackCanvas.width / 2) - (carW / 2);
-            // Lock car vertically at standard placement baseline
-            const carY = trackCanvas.height - 150; 
+            // Inner Racing Target Guideline Core
+            trackCtx.strokeStyle = "rgba(255,255,255,0.06)";
+            trackCtx.lineWidth = 2;
+            trackCtx.setLineDash([10, 15]);
+            trackCtx.beginPath();
+            trackCtx.arc(centerX, centerY, trackRadius, 0, Math.PI * 2);
+            trackCtx.stroke();
+            trackCtx.setLineDash([]);
 
-            // Glow aura profile shadowing effect layers
-            trackCtx.shadowBlur = carGlowRadius;
+            // 2. INTEGRATED SPEEDOMETER GRAPHIC HUD DISPLAY
+            // Arc progress ring gauge
+            const speedPerc = velocity / targetMaxSpeed;
+            trackCtx.strokeStyle = speedPerc > 0.5 ? varStyle('--accent-cyan') : varStyle('--accent-blue');
+            trackCtx.lineWidth = 6;
+            trackCtx.lineCap = "round";
+            trackCtx.beginPath();
+            // Render Speed Gauge Ring sweeping from bottom left around to bottom right
+            trackCtx.arc(centerX, centerY, trackRadius - 40, Math.PI * 0.75, Math.PI * 0.75 + (Math.PI * 1.5 * speedPerc));
+            trackCtx.stroke();
+
+            // Digital speed string numbers output
+            trackCtx.fillStyle = "#ffffff";
+            trackCtx.font = "700 48px monospace";
+            trackCtx.textAlign = "center";
+            trackCtx.textBaseline = "middle";
+            trackCtx.fillText(Math.round(velocity * 4), centerX, centerY - 10); // Scalar multiplier visual value scaling
+
+            // Speed Units Caption Text
+            trackCtx.fillStyle = varStyle('--text-muted');
+            trackCtx.font = "bold 12px system-ui";
+            trackCtx.fillText("COGNITIVE RAD/S", centerX, centerY + 25);
+
+            // Mini Status Pill Inside Speedometer Dial
+            trackCtx.fillStyle = currentCarState === "ATTENTIVE" ? "rgba(0, 255, 204, 0.1)" : "rgba(255, 51, 85, 0.1)";
+            trackCtx.strokeStyle = currentCarState === "ATTENTIVE" ? varStyle('--accent-cyan') : varStyle('--accent-red');
+            trackCtx.lineWidth = 1;
+            
+            const pillW = 90, pillH = 22;
+            trackCtx.beginPath();
+            trackCtx.roundRect(centerX - pillW/2, centerY + 45, pillW, pillH, 11);
+            trackCtx.fill();
+            trackCtx.stroke();
+
+            trackCtx.fillStyle = currentCarState === "ATTENTIVE" ? varStyle('--accent-cyan') : varStyle('--accent-red');
+            trackCtx.font = "bold 10px system-ui";
+            trackCtx.fillText(currentCarState, centerX, centerY + 56);
+
+            // 3. RENDER SPORT CAR GEOMETRY SILHOUETTE ON THE ORBIT CIRCLE
+            const carX = centerX + Math.cos(carAngle) * trackRadius;
+            const carY = centerY + Math.sin(carAngle) * trackRadius;
+
+            trackCtx.save();
+            trackCtx.translate(carX, carY);
+            // Rotate the car sprite body to stay tangent to the track curve radius vector
+            trackCtx.rotate(carAngle + Math.PI / 2);
+
+            // Car chassis glow blur
+            trackCtx.shadowBlur = 20;
             trackCtx.shadowColor = carGlowColor;
 
-            // Main Aero Shell Chassis
+            // Main Aero Formula Body Pod
             trackCtx.fillStyle = carColor;
-            trackCtx.fillRect(carX, carY, carW, carH - 12);
+            const cw = 22, ch = 42;
+            trackCtx.beginPath();
+            trackCtx.roundRect(-cw/2, -ch/2, cw, ch, 6);
+            trackCtx.fill();
 
-            trackCtx.shadowBlur = 0; // Turn off visual processing blur shadows for interior modules
+            trackCtx.shadowBlur = 0; // Disable blur overhead computation layers
 
-            // Side pods structure
-            trackCtx.fillStyle = "#111";
-            trackCtx.fillRect(carX - 4, carY + 30, 4, 35);
-            trackCtx.fillRect(carX + carW, carY + 30, 4, 35);
+            // Racing Spoiler Deck Elements
+            trackCtx.fillStyle = "#09090b";
+            trackCtx.fillRect(-cw/2 - 4, ch/2 - 6, cw + 8, 5); // Rear Wing
+            trackCtx.fillRect(-cw/2 - 2, -ch/2 + 2, cw + 4, 3); // Front Splitter
 
-            // Performance rear deck wing asset
-            trackCtx.fillStyle = "#0a0a0c";
-            trackCtx.fillRect(carX - 8, carY + carH - 15, carW + 16, 12);
+            // Tires
+            trackCtx.fillStyle = "#000000";
+            trackCtx.fillRect(-cw/2 - 3, -ch/2 + 6, 3, 8); // FL
+            trackCtx.fillRect(cw/2, -ch/2 + 6, 3, 8);  // FR
+            trackCtx.fillRect(-cw/2 - 4, ch/2 - 14, 4, 10); // RL
+            trackCtx.fillRect(cw/2, ch/2 - 14, 4, 10);  // RR
 
-            // Deep tint canopy glass windshield cockpit area
-            trackCtx.fillStyle = "#090d16";
-            trackCtx.fillRect(carX + 11, carY + 28, carW - 22, 28);
+            // Dark glass canopy cockpit window area
+            trackCtx.fillStyle = "#0e1726";
+            trackCtx.beginPath();
+            trackCtx.arc(0, -4, 5, 0, Math.PI * 2);
+            trackCtx.fill();
 
-            // Decorative stripe aesthetics
-            trackCtx.fillStyle = "#ffffff";
-            trackCtx.fillRect(carX + 16, carY, 4, 20);
-            trackCtx.fillRect(carX + carW - 20, carY, 4, 20);
+            // Emoji Character Visual Alignment Anchor Center Layer
+            trackCtx.font = "16px Arial";
+            trackCtx.fillText("🏎️", 0, 2);
 
-            // Render Text Emoji Overlay on top center
-            trackCtx.fillStyle = "#ffffff";
-            trackCtx.font = "bold 28px Segoe UI";
-            trackCtx.textAlign = "center";
-            trackCtx.fillText("🏎️", trackCanvas.width / 2, carY + 42);
+            trackCtx.restore();
         }
 
         // --- SMOOTH DATA OSCILLOSCOPE TRACING ---
         function drawChart() {
             chartCtx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
             
-            // Subdued baseline matrix grids
-            chartCtx.strokeStyle = "#1e1e26";
+            chartCtx.strokeStyle = "#22222b";
             chartCtx.lineWidth = 1;
             for(let i = 1; i < 5; i++) {
                 let yLine = (chartCanvas.height / 5) * i;
@@ -334,16 +461,14 @@
 
             if (eegBuffer.length < 2) return;
 
-            // Build smooth spline graph tracking trail path lines
             chartCtx.beginPath();
-            chartCtx.strokeStyle = currentCarState === "ATTENTIVE" ? "#00ffcc" : "#3498db";
+            chartCtx.strokeStyle = currentCarState === "ATTENTIVE" ? varStyle('--accent-cyan') : varStyle('--accent-blue');
             chartCtx.lineWidth = 2.5;
             chartCtx.lineCap = "round";
             chartCtx.lineJoin = "round";
 
             for (let i = 0; i < eegBuffer.length; i++) {
                 const x = (chartCanvas.width / (maxDataPoints - 1)) * i;
-                // Auto normalize 10-bit dynamic array value windows down to pixel bounds safely
                 const y = chartCanvas.height - ((eegBuffer[i] / 1023) * chartCanvas.height);
 
                 if (i === 0) chartCtx.moveTo(x, y);
@@ -352,7 +477,6 @@
             chartCtx.stroke();
         }
 
-        // Dedicated Animation Frame Master Coordination Thread Loop
         function masterSyncLoop() {
             updateAndRenderGame();
             drawChart();
