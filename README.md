@@ -39,3 +39,50 @@
 * **Arduino IDE**
 * **Visual Studio Code**
 * **Google Colab**
+
+---
+
+### Hardware connection
+
+#### Step 1: Assembly
+If your BioAmp EXG Pill did not come pre-soldered, solder the header pins and the JST PH 2.0 connector onto the board.
+
+<p align="center">
+  <img src="img/assembly.jpeg" width="200" alt="Assembly Diagram" />
+</p>
+
+#### Step 2: Skin Preparation
+Gently rub Nuprep Skin Preparation Gel onto your forehead and behind your earlobes to lower skin impedance and improve signal accuracy. Wipe the areas clean with a wet wipe.
+
+<p align="center">
+  <img src="img/skin_preparation.png" width="200" alt="Skin Preparation" />
+</p>
+
+#### Step 3: Connecting Electrode Cable
+Plug the BioAmp Cable v3 directly into the JST PH 2.0 connector on the BioAmp EXG Pill.
+
+<p align="center">
+  <img src="img/connect_electrodes.png" width="200" alt="Cable Connection" />
+</p>
+
+#### Step 4: Electrode Placement
+Snap the cable onto 3 gel electrodes and peel off their plastic backings. Place the **IN+** electrode on your forehead (between Fp1 and Fp2 positions). Place the **IN-** and **REF** electrodes on the bony areas behind your earlobes.
+
+<p align="center">
+  <img src="img/electrode_placement.png" width="200" alt="Electrode Placement Diagram" />
+</p>
+
+#### Step 5: Connect Development Board
+Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno. 
+
+**CRITICAL:** Double-check your VCC and GND connections. Reversing them can permanently damage your sensor.
+
+* **VCC** = **5V**
+* **GND** = **GND**
+* **OUT** = **A0**
+
+<p align="center">
+  <img src="img/connect_development_ board.png" width="200" alt="Wiring Diagram" />
+</p>
+
+---
