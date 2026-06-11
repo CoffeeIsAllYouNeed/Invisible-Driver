@@ -48,28 +48,28 @@
 If your BioAmp EXG Pill did not come pre-soldered, solder the header pins and the JST PH 2.0 connector onto the board.
 
 <p align="center">
-  <img src="img/assembly.jpeg" width="200" alt="Assembly Diagram" />
+  <img src="img/assembly.jpeg" width="300" alt="Assembly Diagram" />
 </p>
 
 #### Step 2: Skin Preparation
 Gently rub Nuprep Skin Preparation Gel onto your forehead and behind your earlobes to lower skin impedance and improve signal accuracy. Wipe the areas clean with a wet wipe.
 
 <p align="center">
-  <img src="img/skin_preparation.png" width="200" alt="Skin Preparation" />
+  <img src="img/skin_preparation.png" width="300" alt="Skin Preparation" />
 </p>
 
 #### Step 3: Connecting Electrode Cable
 Plug the BioAmp Cable v3 directly into the JST PH 2.0 connector on the BioAmp EXG Pill.
 
 <p align="center">
-  <img src="img/connect_electrodes.png" width="200" alt="Cable Connection" />
+  <img src="img/connect_electrodes.png" width="300" alt="Cable Connection" />
 </p>
 
 #### Step 4: Electrode Placement
 Snap the cable onto 3 gel electrodes and peel off their plastic backings. Place the **IN+** electrode on your forehead (between Fp1 and Fp2 positions). Place the **IN-** and **REF** electrodes on the bony areas behind your earlobes.
 
 <p align="center">
-  <img src="img/electrode_placement.png" width="200" alt="Electrode Placement Diagram" />
+  <img src="img/electrode_placement.png" width="300" alt="Electrode Placement Diagram" />
 </p>
 
 #### Step 5: Connect Development Board
@@ -82,7 +82,46 @@ Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno
 * **OUT** = **A0**
 
 <p align="center">
-  <img src="img/connect_development_ board.png" width="200" alt="Wiring Diagram" />
+  <img src="img/connect_development_ board.png" width="300" alt="Wiring Diagram" />
 </p>
+
+---
+
+### Software steps
+
+#### Step 1: Clone the Repository
+
+```bash
+git clone [https://github.com/CoffeeIsAllYouNeed/Invisible-Driver.git](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver.git)
+cd Invisible-Driver
+
+```
+
+#### Step 2: Install Project Dependencies
+
+```bash
+pip install -r requirements.txt
+
+```
+
+#### Step 3: Flash the Arduino Hardware
+
+1. Connect your EEG hardware module to your computer via USB.
+2. Open the file located at `hardware/eeg.ino` using the Arduino IDE.
+3. Select your correct board type and active communication port (e.g., `COM6`).
+4. Click **Upload** to flash the code onto your hardware.
+
+#### Step 4: Start the FastAPI Stream Server
+
+Run the following command in your terminal to launch the high-speed async WebSocket server:
+
+```bash
+uvicorn server:app --reload --port 8000
+
+```
+
+#### Step 5: Launch the Interface Dashboard
+
+Navigate: **`http://127.0.0.1:8000`**
 
 ---
