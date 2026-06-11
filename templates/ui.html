@@ -2,13 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>EEG Focus Engine Racing Interface</title>
+    <title>BCI Open Highway Engine Terminal</title>
     <style>
         :root {
-            --bg-base: #0c0c0e;
-            --bg-surface: #16161a;
-            --bg-card: #1e1e24;
-            --border-glow: #2a2a35;
+            --bg-base: #09090b;
+            --bg-surface: #141419;
             --text-main: #f4f4f7;
             --text-muted: #8a8a98;
             --accent-cyan: #00ffcc;
@@ -18,7 +16,7 @@
 
         body {
             margin: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-base);
             color: var(--text-main);
             display: flex;
@@ -26,463 +24,296 @@
             overflow: hidden;
         }
 
-        /* Left Side: Circular Track & Speedometer Panel */
-        #track-container {
+        /* Interactive Left Side: Arcade Display Window */
+        #game-viewport {
             width: 45%;
-            background: radial-gradient(circle at center, #1a1a24 0%, #0c0c0e 100%);
-            border-right: 1px solid var(--border-glow);
+            background: #111116;
+            border-right: 1px solid #2d2d38;
             position: relative;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            box-shadow: inset -20px 0 30px rgba(0,0,0,0.6);
         }
 
-        #trackCanvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+        #arcadeCanvas {
+            background: #222;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            border-radius: 12px;
             display: block;
+            border: 2px solid #2a2a35;
         }
 
-        /* Right Side: Configuration Control Panel */
-        #control-panel {
+        /* Right Side: Command Controls & Live Diagnostics */
+        #hud-panel {
             width: 55%;
             padding: 40px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
             background: var(--bg-surface);
             box-sizing: border-box;
             gap: 24px;
             overflow-y: auto;
         }
 
-        .panel-header h2 { 
+        .panel-title h2 { 
             color: var(--accent-cyan); 
             margin: 0 0 6px 0; 
             font-size: 26px; 
             font-weight: 700;
-            letter-spacing: -0.02em;
         }
-        .panel-header p {
-            margin: 0;
-            color: var(--text-muted);
-            font-size: 14px;
-        }
+        .panel-title p { margin: 0; color: var(--text-muted); font-size: 14px; }
 
-        .btn-group { display: flex; gap: 16px; margin: 5px 0; }
-
+        .btn-row { display: flex; gap: 16px; }
         button {
-            flex: 1;
-            padding: 14px 24px;
-            font-size: 14px;
-            font-weight: 600;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #fff;
+            flex: 1; padding: 14px 24px; font-size: 14px; font-weight: 600;
+            border: 1px solid transparent; border-radius: 8px; cursor: pointer;
+            transition: all 0.2s ease; color: #fff;
         }
+        .btn-hw { background: linear-gradient(135deg, #e67e22, #d35400); border-color: #f39c12; }
+        .btn-hw:hover:not(:disabled) { box-shadow: 0 0 20px rgba(230,126,34,0.4); }
+        .btn-sim { background: linear-gradient(135deg, #3498db, #2980b9); border-color: #5dade2; }
+        .btn-sim:hover:not(:disabled) { box-shadow: 0 0 20px rgba(52,152,219,0.4); }
+        button:disabled { background: #24242b !important; border-color: #2d2d36 !important; color: #555562 !important; cursor: not-allowed; }
 
-        .btn-hardware { 
-            background: linear-gradient(135deg, #e67e22, #d35400); 
-            border-color: #f39c12;
-        }
-        .btn-hardware:hover:not(:disabled) { 
-            box-shadow: 0 0 20px rgba(230,126,34,0.4);
-            transform: translateY(-1px);
-        }
+        .metrics-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .metric-tile { background: #1d1d24; border: 1px solid #2d2d38; padding: 16px; border-radius: 10px; border-left: 3px solid #3c3c45; }
+        .tile-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .tile-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        
+        .status-attentive { color: var(--accent-cyan) !important; }
+        .status-relaxed { color: var(--accent-blue) !important; }
 
-        .btn-simulation { 
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            border-color: #5dade2;
-        }
-        .btn-simulation:hover:not(:disabled) { 
-            box-shadow: 0 0 20px rgba(52,152,219,0.4);
-            transform: translateY(-1px);
-        }
-
-        button:disabled { 
-            background: #24242b !important; 
-            border-color: #2d2d36 !important;
-            color: #555562 !important;
-            cursor: not-allowed; 
-            box-shadow: none !important;
-            transform: none !important;
-        }
-
-        /* Clean Glassmorphic Metrics HUD Cards */
-        #metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .metric-card {
-            background: #1d1d24;
-            border: 1px solid #2d2d38;
-            padding: 16px;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .metric-card .card-title {
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: var(--text-muted);
-        }
-
-        .metric-card .card-value {
-            font-size: 20px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        /* Custom Dynamic Colored States */
-        .state-attentive { color: var(--accent-cyan) !important; }
-        .state-relaxed { color: var(--accent-blue) !important; }
-
-        /* Modernized Signal Trace Window Viewport */
-        .chart-window {
+        .oscilloscope-box {
             flex: 1;
             background: #0c0c0e;
             border-radius: 12px;
             border: 1px solid #23232a;
             position: relative;
-            min-height: 220px;
-            overflow: hidden;
+            min-height: 200px;
         }
-        #chartCanvas { width: 100%; height: 100%; display: block; }
-        .chart-label {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            z-index: 10;
-        }
+        #oscilloscopeCanvas { width: 100%; height: 100%; display: block; }
+        .oscilloscope-tag { position: absolute; top: 15px; left: 15px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); z-index: 10; }
     </style>
 </head>
 <body>
 
-    <div id="track-container">
-        <canvas id="trackCanvas"></canvas>
+    <div id="game-viewport">
+        <div style="color: var(--text-muted); margin-bottom: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.15em;">NEURO-DRIVE ARCHITECTURE</div>
+        <canvas id="arcadeCanvas" width="400" height="550"></canvas>
     </div>
 
-    <div id="control-panel">
-        <div class="panel-header">
-            <h2>EEG Focus Engine Racing Interface</h2>
-            <p>Select your data pipeline ingestion configuration protocol below to initialize tracking:</p>
+    <div id="hud-panel">
+        <div class="panel-title">
+            <h2>EEG BCI Integrated Highway Racer</h2>
+            <p>Your real-time classification windows dictate engine throttle outputs and velocity profiles:</p>
         </div>
         
-        <div class="btn-group">
-            <button class="btn-hardware" id="btn-hw" onclick="startStream('serial')">Initialize Hardware Ingest</button>
-            <button class="btn-simulation" id="btn-sim" onclick="startStream('file')">Run Telemetry Simulation</button>
+        <div class="btn-row">
+            <button class="btn-hw" id="btn-hardware" onclick="connectPipeline('serial')">Initialize Hardware Ingest</button>
+            <button class="btn-sim" id="btn-simulation" onclick="connectPipeline('file')">Run Telemetry Simulation</button>
         </div>
 
-        <div id="metrics-grid">
-            <div class="metric-card" style="border-left: 3px solid var(--accent-cyan);">
-                <div class="card-title">Cognitive State</div>
-                <div id="lbl-state" class="card-value">Awaiting...</div>
+        <div class="metrics-container">
+            <div class="metric-tile" id="tile-cognitive" style="border-left-color: var(--accent-blue);">
+                <div class="tile-label">Cognitive State</div>
+                <div id="val-state" class="tile-value">Awaiting...</div>
             </div>
-            <div class="metric-card" style="border-left: 3px solid var(--accent-blue);">
-                <div class="card-title">Engine Response</div>
-                <div id="lbl-action" class="card-value">Stationary</div>
+            <div class="metric-tile" style="border-left-color: var(--accent-cyan);">
+                <div class="tile-label">Throttle Vector</div>
+                <div id="val-action" class="tile-value">None</div>
             </div>
-            <div class="metric-card" style="border-left: 3px solid #ffd700;">
-                <div class="card-title">EEG Vector Stream</div>
-                <div id="lbl-signal" class="card-value">---</div>
+            <div class="metric-tile" style="border-left-color: #ffd700;">
+                <div class="tile-label">Raw Signal</div>
+                <div id="val-signal" class="tile-value">---</div>
             </div>
         </div>
 
-        <div class="chart-window">
-            <div class="chart-label">Live Raw EEG Trace (Normalized Metrics Vector)</div>
-            <canvas id="chartCanvas"></canvas>
+        <div class="oscilloscope-box">
+            <div class="oscilloscope-tag">Live Raw EEG Trace (Normalized Window)</div>
+            <canvas id="oscilloscopeCanvas"></canvas>
         </div>
     </div>
 
     <script>
-        const trackCanvas = document.getElementById("trackCanvas");
-        const trackCtx = trackCanvas.getContext("2d");
-        const chartCanvas = document.getElementById("chartCanvas");
-        const chartCtx = chartCanvas.getContext("2d");
+        const canvas = document.getElementById("arcadeCanvas");
+        const ctx = canvas.getContext("2d");
+        const oscCanvas = document.getElementById("oscilloscopeCanvas");
+        const oscCtx = oscCanvas.getContext("2d");
 
-        let ws = null;
+        let socket = null;
+        let signalHistory = [];
+        const maxTraceSamples = 120;
+        let globalCognitiveState = "RELAXED";
 
-        // --- RIGID TIME-WINDOW PHYSICS CONTROLLER ---
-        let currentCarState = "RELAXED";
-        let stateEndTime = 0; 
-        
-        let velocity = 0;
-        const targetMaxSpeed = 45; // Enhanced scalar range display for speedometer output
-        const targetMinSpeed = 0;
-        
-        // Circular Track Orbit Configuration Values
-        let carAngle = 0; 
+        // --- INBUILT OPEN HIGHWAY ENGINE RULES ---
+        let car = { x: 175, y: 430, width: 45, height: 80, targetSpeed: 0, speed: 0, maxVelocity: 22 };
+        let score = 0;
+        let totalOdometer = 0;
+        let animatedLineOffset = 0;
 
-        // Car visual properties
-        let carColor = varStyle('--accent-red');
-        let carGlowColor = "rgba(255, 51, 85, 0.5)";
+        function progressEngineTicks() {
+            // Speed transitions
+            car.speed += (car.targetSpeed - car.speed) * 0.05;
+            totalOdometer += car.speed;
+            animatedLineOffset = (animatedLineOffset + car.speed) % 80;
 
-        // --- LIVE SIGNAL MEMORY WINDOW ---
-        let eegBuffer = [];
-        const maxDataPoints = 180;
+            // Simple score calculation based on distance traveled
+            if (car.speed > 1) {
+                score += Math.floor(car.speed * 0.1);
+            }
 
-        function varStyle(name) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+            // High-velocity highway lane sway physics simulation
+            if (car.speed > 2) {
+                car.x = 175 + Math.sin(totalOdometer * 0.015) * 40;
+            }
         }
 
-        function resizeCanvases() {
-            trackCanvas.width = trackCanvas.parentElement.clientWidth;
-            trackCanvas.height = trackCanvas.parentElement.clientHeight;
-            chartCanvas.width = chartCanvas.parentElement.clientWidth;
-            chartCanvas.height = chartCanvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', resizeCanvases);
-        resizeCanvases();
+        function renderArcadeGraphics() {
+            // Asphalt Track Base
+            ctx.fillStyle = "#282c34";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        function startStream(modeSelection) {
-            document.getElementById('btn-hw').disabled = true;
-            document.getElementById('btn-sim').disabled = true;
-            document.getElementById('lbl-state').innerText = "Initializing...";
+            // Side Shoulders
+            ctx.fillStyle = "#1e2127";
+            ctx.fillRect(0, 0, 30, canvas.height);
+            ctx.fillRect(canvas.width - 30, 0, 30, canvas.height);
+
+            // Red/White curbing tiles
+            ctx.fillStyle = "#e06c75"; 
+            for(let y = (animatedLineOffset % 40) - 40; y < canvas.height; y += 40) {
+                ctx.fillRect(25, y, 5, 20);
+                ctx.fillRect(canvas.width - 30, y, 5, 20);
+            }
+
+            // Central lane dashed partitions
+            ctx.strokeStyle = "#ffffff";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([30, 50]);
+            ctx.lineDashOffset = -animatedLineOffset;
+
+            for (let x = 110; x < canvas.width - 100; x += 80) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            ctx.setLineDash([]); 
+
+            // Draw Player Supercar
+            ctx.save();
+            ctx.shadowBlur = car.speed > 5 ? 25 : 5;
             
-            eegBuffer = [];
-            stateEndTime = 0;
-            currentCarState = "RELAXED";
+            let colorAccent = (globalCognitiveState === "ATTENTIVE") ? lookupStyle('--accent-cyan') : lookupStyle('--accent-blue');
+            ctx.shadowColor = colorAccent;
+            ctx.fillStyle = colorAccent;
+            
+            ctx.beginPath();
+            ctx.roundRect(car.x, car.y, car.width, car.height, 8);
+            ctx.fill();
+            ctx.restore();
 
-            ws = new WebSocket(`ws://${window.location.host}/pipeline_stream`);
+            // Cockpit canopy accent line elements
+            ctx.fillStyle = "#0c1017";
+            ctx.fillRect(car.x + 8, car.y + 22, car.width - 16, 25);
+            ctx.fillStyle = "#fff"; 
+            ctx.fillRect(car.x + car.width/2 - 2, car.y, 4, 15);
 
-            ws.onopen = function() {
-                ws.send(JSON.stringify({ "command": "START", "mode": modeSelection }));
+            // HUD Data Overlays
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 20px monospace";
+            ctx.fillText(`SCORE: ${score}`, 45, 40);
+            ctx.font = "14px system-ui";
+            ctx.fillStyle = lookupStyle('--text-muted');
+            ctx.fillText(`SPEED: ${Math.round(car.speed * 12)} KM/H`, 45, 62);
+        }
+
+        // --- WEBSOCKET ENGINE CONNECTION ---
+        function connectPipeline(streamMode) {
+            document.getElementById('btn-hardware').disabled = true;
+            document.getElementById('btn-simulation').disabled = true;
+            
+            // Reset state
+            car.speed = 0; car.targetSpeed = 0; score = 0; totalOdometer = 0;
+
+            const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+            socket = new WebSocket(`${wsScheme}://${window.location.host}/pipeline_stream`);
+
+            socket.onopen = function() {
+                socket.send(JSON.stringify({ "command": "START", "mode": streamMode }));
             };
 
-            ws.onmessage = function(event) {
-                const data = JSON.parse(event.data);
+            socket.onmessage = function(event) {
+                const packet = JSON.parse(event.data);
                 
-                if (data.status === "complete") {
-                    document.getElementById('lbl-state').innerText = "Completed";
-                    resetControls();
-                    return;
+                globalCognitiveState = packet.state;
+                
+                const elementState = document.getElementById('val-state');
+                elementState.innerText = packet.state;
+                elementState.className = "tile-value " + (packet.state === "ATTENTIVE" ? "status-attentive" : "status-relaxed");
+                document.getElementById('tile-cognitive').style.borderLeftColor = packet.state === "ATTENTIVE" ? lookupStyle('--accent-cyan') : lookupStyle('--accent-blue');
+
+                document.getElementById('val-action').innerText = packet.action === "ACCELERATE" ? "THROTTLE ON" : "BRAKING";
+                document.getElementById('val-signal').innerText = packet.signal ? Number(packet.signal).toFixed(1) : "---";
+
+                if (packet.signal !== undefined) {
+                    signalHistory.push(Number(packet.signal));
+                    if (signalHistory.length > maxTraceSamples) signalHistory.shift();
                 }
 
-                // Update text metrics UI cleanly
-                const stateEl = document.getElementById('lbl-state');
-                stateEl.innerText = data.state;
-                stateEl.className = "card-value " + (data.state === "ATTENTIVE" ? "state-attentive" : "state-relaxed");
-                
-                document.getElementById('lbl-action').innerText = data.action === "ACCELERATE" ? "THRUST" : "COASTING";
-                document.getElementById('lbl-signal').innerText = data.signal ? Number(data.signal).toFixed(1) : "---";
-
-                if (data.signal !== undefined) {
-                    eegBuffer.push(Number(data.signal));
-                    if (eegBuffer.length > maxDataPoints) eegBuffer.shift();
-                }
-
-                if (data.state) {
-                    const now = performance.now();
-                    if (data.state !== currentCarState) {
-                        currentCarState = data.state;
-                        stateEndTime = now + 2000; // Keep continuous for 2 seconds
-                    }
+                // Translate incoming model classification directly to velocity targets
+                if (packet.action === "ACCELERATE") {
+                    car.targetSpeed = car.maxVelocity;
+                } else {
+                    car.targetSpeed = 2; // Decelerate smoothly to cruise speed
                 }
             };
 
-            ws.onclose = () => { resetControls(); };
-            ws.onerror = (err) => { resetControls(); };
+            socket.onclose = function() {
+                document.getElementById('btn-hardware').disabled = false;
+                document.getElementById('btn-simulation').disabled = false;
+                console.log("WebSocket pipeline stream disconnected cleanly.");
+            };
         }
 
-        function resetControls() {
-            document.getElementById('btn-hw').disabled = false;
-            document.getElementById('btn-sim').disabled = false;
-            document.getElementById('lbl-action').innerText = "Stationary";
-            const stateEl = document.getElementById('lbl-state');
-            stateEl.innerText = "Awaiting...";
-            stateEl.className = "card-value";
-            currentCarState = "RELAXED";
-            stateEndTime = 0;
+        function lookupStyle(property) { 
+            return getComputedStyle(document.documentElement).getPropertyValue(property).trim(); 
         }
 
-        // --- CANVAS GAME LOOP: CIRCULAR TRACK & DIGITAL SPEEDOMETER ---
-        function updateAndRenderGame() {
-            const now = performance.now();
+        function scaleTraceViewport() {
+            oscCanvas.width = oscCanvas.parentElement.clientWidth;
+            oscCanvas.height = oscCanvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', scaleTraceViewport);
+        scaleTraceViewport();
 
-            // Handle Physics Transitions
-            if (now < stateEndTime) {
-                if (currentCarState === "ATTENTIVE") {
-                    velocity += (targetMaxSpeed - velocity) * 0.05;
-                    carColor = varStyle('--accent-cyan');
-                    carGlowColor = "rgba(0, 255, 204, 0.6)";
-                } else {
-                    velocity += (targetMinSpeed - velocity) * 0.08;
-                    carColor = varStyle('--accent-red');
-                    carGlowColor = "rgba(255, 51, 85, 0.4)";
-                }
-            } else {
-                if (currentCarState === "ATTENTIVE") {
-                    velocity += (targetMaxSpeed - velocity) * 0.01;
-                } else {
-                    velocity *= 0.95;
-                }
+        function renderOscilloscope() {
+            oscCtx.clearRect(0, 0, oscCanvas.width, oscCanvas.height);
+            oscCtx.strokeStyle = "#1b1b22";
+            oscCtx.lineWidth = 1;
+            for(let i = 1; i < 4; i++) {
+                let currentY = (oscCanvas.height / 4) * i;
+                oscCtx.beginPath(); oscCtx.moveTo(0, currentY); oscCtx.lineTo(oscCanvas.width, currentY); oscCtx.stroke();
             }
-
-            // Translate velocity into angular orbital steps around the circle
-            carAngle += (velocity * 0.0015);
-
-            const centerX = trackCanvas.width / 2;
-            const centerY = trackCanvas.height / 2;
-            const trackRadius = Math.min(trackCanvas.width, trackCanvas.height) * 0.34;
-
-            trackCtx.clearRect(0, 0, trackCanvas.width, trackCanvas.height);
-
-            // 1. Draw Outer Glowing Ring Border Lane
-            trackCtx.strokeStyle = "#22222d";
-            trackCtx.lineWidth = 42;
-            trackCtx.beginPath();
-            trackCtx.arc(centerX, centerY, trackRadius, 0, Math.PI * 2);
-            trackCtx.stroke();
-
-            // Inner Racing Target Guideline Core
-            trackCtx.strokeStyle = "rgba(255,255,255,0.06)";
-            trackCtx.lineWidth = 2;
-            trackCtx.setLineDash([10, 15]);
-            trackCtx.beginPath();
-            trackCtx.arc(centerX, centerY, trackRadius, 0, Math.PI * 2);
-            trackCtx.stroke();
-            trackCtx.setLineDash([]);
-
-            // 2. INTEGRATED SPEEDOMETER GRAPHIC HUD DISPLAY
-            // Arc progress ring gauge
-            const speedPerc = velocity / targetMaxSpeed;
-            trackCtx.strokeStyle = speedPerc > 0.5 ? varStyle('--accent-cyan') : varStyle('--accent-blue');
-            trackCtx.lineWidth = 6;
-            trackCtx.lineCap = "round";
-            trackCtx.beginPath();
-            // Render Speed Gauge Ring sweeping from bottom left around to bottom right
-            trackCtx.arc(centerX, centerY, trackRadius - 40, Math.PI * 0.75, Math.PI * 0.75 + (Math.PI * 1.5 * speedPerc));
-            trackCtx.stroke();
-
-            // Digital speed string numbers output
-            trackCtx.fillStyle = "#ffffff";
-            trackCtx.font = "700 48px monospace";
-            trackCtx.textAlign = "center";
-            trackCtx.textBaseline = "middle";
-            trackCtx.fillText(Math.round(velocity * 4), centerX, centerY - 10); // Scalar multiplier visual value scaling
-
-            // Speed Units Caption Text
-            trackCtx.fillStyle = varStyle('--text-muted');
-            trackCtx.font = "bold 12px system-ui";
-            trackCtx.fillText("COGNITIVE RAD/S", centerX, centerY + 25);
-
-            // Mini Status Pill Inside Speedometer Dial
-            trackCtx.fillStyle = currentCarState === "ATTENTIVE" ? "rgba(0, 255, 204, 0.1)" : "rgba(255, 51, 85, 0.1)";
-            trackCtx.strokeStyle = currentCarState === "ATTENTIVE" ? varStyle('--accent-cyan') : varStyle('--accent-red');
-            trackCtx.lineWidth = 1;
+            if (signalHistory.length < 2) return;
             
-            const pillW = 90, pillH = 22;
-            trackCtx.beginPath();
-            trackCtx.roundRect(centerX - pillW/2, centerY + 45, pillW, pillH, 11);
-            trackCtx.fill();
-            trackCtx.stroke();
-
-            trackCtx.fillStyle = currentCarState === "ATTENTIVE" ? varStyle('--accent-cyan') : varStyle('--accent-red');
-            trackCtx.font = "bold 10px system-ui";
-            trackCtx.fillText(currentCarState, centerX, centerY + 56);
-
-            // 3. RENDER SPORT CAR GEOMETRY SILHOUETTE ON THE ORBIT CIRCLE
-            const carX = centerX + Math.cos(carAngle) * trackRadius;
-            const carY = centerY + Math.sin(carAngle) * trackRadius;
-
-            trackCtx.save();
-            trackCtx.translate(carX, carY);
-            // Rotate the car sprite body to stay tangent to the track curve radius vector
-            trackCtx.rotate(carAngle + Math.PI / 2);
-
-            // Car chassis glow blur
-            trackCtx.shadowBlur = 20;
-            trackCtx.shadowColor = carGlowColor;
-
-            // Main Aero Formula Body Pod
-            trackCtx.fillStyle = carColor;
-            const cw = 22, ch = 42;
-            trackCtx.beginPath();
-            trackCtx.roundRect(-cw/2, -ch/2, cw, ch, 6);
-            trackCtx.fill();
-
-            trackCtx.shadowBlur = 0; // Disable blur overhead computation layers
-
-            // Racing Spoiler Deck Elements
-            trackCtx.fillStyle = "#09090b";
-            trackCtx.fillRect(-cw/2 - 4, ch/2 - 6, cw + 8, 5); // Rear Wing
-            trackCtx.fillRect(-cw/2 - 2, -ch/2 + 2, cw + 4, 3); // Front Splitter
-
-            // Tires
-            trackCtx.fillStyle = "#000000";
-            trackCtx.fillRect(-cw/2 - 3, -ch/2 + 6, 3, 8); // FL
-            trackCtx.fillRect(cw/2, -ch/2 + 6, 3, 8);  // FR
-            trackCtx.fillRect(-cw/2 - 4, ch/2 - 14, 4, 10); // RL
-            trackCtx.fillRect(cw/2, ch/2 - 14, 4, 10);  // RR
-
-            // Dark glass canopy cockpit window area
-            trackCtx.fillStyle = "#0e1726";
-            trackCtx.beginPath();
-            trackCtx.arc(0, -4, 5, 0, Math.PI * 2);
-            trackCtx.fill();
-
-            // Emoji Character Visual Alignment Anchor Center Layer
-            trackCtx.font = "16px Arial";
-            trackCtx.fillText("🏎️", 0, 2);
-
-            trackCtx.restore();
-        }
-
-        // --- SMOOTH DATA OSCILLOSCOPE TRACING ---
-        function drawChart() {
-            chartCtx.clearRect(0, 0, chartCanvas.width, chartCanvas.height);
-            
-            chartCtx.strokeStyle = "#22222b";
-            chartCtx.lineWidth = 1;
-            for(let i = 1; i < 5; i++) {
-                let yLine = (chartCanvas.height / 5) * i;
-                chartCtx.beginPath();
-                chartCtx.moveTo(0, yLine);
-                chartCtx.lineTo(chartCanvas.width, yLine);
-                chartCtx.stroke();
+            oscCtx.beginPath();
+            oscCtx.strokeStyle = globalCognitiveState === "ATTENTIVE" ? lookupStyle('--accent-cyan') : lookupStyle('--accent-blue');
+            oscCtx.lineWidth = 2;
+            for (let i = 0; i < signalHistory.length; i++) {
+                const targetX = (oscCanvas.width / (maxTraceSamples - 1)) * i;
+                const targetY = oscCanvas.height - ((signalHistory[i] / 1023) * oscCanvas.height);
+                if (i === 0) oscCtx.moveTo(targetX, targetY); else oscCtx.lineTo(targetX, targetY);
             }
-
-            if (eegBuffer.length < 2) return;
-
-            chartCtx.beginPath();
-            chartCtx.strokeStyle = currentCarState === "ATTENTIVE" ? varStyle('--accent-cyan') : varStyle('--accent-blue');
-            chartCtx.lineWidth = 2.5;
-            chartCtx.lineCap = "round";
-            chartCtx.lineJoin = "round";
-
-            for (let i = 0; i < eegBuffer.length; i++) {
-                const x = (chartCanvas.width / (maxDataPoints - 1)) * i;
-                const y = chartCanvas.height - ((eegBuffer[i] / 1023) * chartCanvas.height);
-
-                if (i === 0) chartCtx.moveTo(x, y);
-                else chartCtx.lineTo(x, y);
-            }
-            chartCtx.stroke();
+            oscCtx.stroke();
         }
 
-        function masterSyncLoop() {
-            updateAndRenderGame();
-            drawChart();
-            requestAnimationFrame(masterSyncLoop);
+        // --- GLOBAL RAF SCHEDULER ---
+        function processingLoop() {
+            progressEngineTicks();
+            renderArcadeGraphics();
+            renderOscilloscope();
+            requestAnimationFrame(processingLoop);
         }
-        masterSyncLoop();
+        processingLoop();
     </script>
 </body>
 </html>
