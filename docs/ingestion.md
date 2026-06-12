@@ -27,6 +27,7 @@
 * Older Arduino's bootloader might take around 4 to 8 seconds to initialize. Extend the sleep time to 10 seconds in that case. [[1]](#ref-1)<br>
 * Date-Time format used: %Y-%m-%d %H:%M:%S.%f.<br>
 * The bad value handling is skipped as they are dealt in preprocessing step.<br>
+* For faster processing and efficient memory usage we used C engine in CSV handling to enable low memory option & converted all values to int32.
 
 ### References: 
 
