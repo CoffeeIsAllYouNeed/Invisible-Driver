@@ -128,7 +128,6 @@ Navigate: **`http://127.0.0.1:8000`**
 
 ```text
 Invisible-Driver/
-├── .vscode/                 # Editor configuration settings.
 ├── data/                    # Stores sample data & live data.
 │   ├── data.csv             # Sample 5 min data for simulation.
 │   └── signal.parquet       # Live data.
@@ -144,12 +143,10 @@ Invisible-Driver/
 │   └── UPDATES.md           # Updates documentation.
 ├── hardware/                # hardware scripts.
 │   └── eeg.ino              # Arduino C++ sketch for live EEG data fetch.
-├── img/                     # Assets.
-│   └── header.png
 ├── model/                   # Stores pre-trained models.
 │   └── model.pkl            # Pre-trained unsupervised model.
 ├── src/                     # Pipeline modules.
-│   ├── **init**.py
+│   ├── __init__.py
 │   ├── feature_engineer.py  # Pipeline step: Feature engineering.
 │   ├── ingest.py            # Pipeline step: Data ingestion.
 │   ├── prediction.py        # Pipeline step: Model training.
@@ -164,7 +161,6 @@ Invisible-Driver/
 ├── requirements.txt         # Dependencies.
 ├── run.py                   # Pipeline run file.
 ├── server.py                # FastAPI server.
-└── UPDATES.md               # Updates documentation.
 ```
 ---
 
