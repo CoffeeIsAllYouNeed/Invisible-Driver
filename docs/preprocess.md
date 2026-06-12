@@ -28,7 +28,7 @@
   <em>Figure 1: Types of brain-waves</em>
 </p>
 
-* For sorting, Quick Sort is implemented as it has low time complexity(Avg. Time Complexity *O(nlogn)*) and space complexity(*O(logn)*).[[3]](#ref-3)<br>
+* For sorting, Quick Sort is implemented as it has low time complexity[Avg. Time Complexity *O(nlogn)*] and space complexity[*O(logn)*].[[3]](#ref-3)<br>
 
 ### References: 
 

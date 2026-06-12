@@ -25,7 +25,7 @@
 * When hardware absent: It has pre-stored data in CSV format to run simulation.<br>
 * Modern Arduino's bootloader normally finishes initializing in 1 to 2 seconds, a 5-second delay is implemented as a safety margin to guarantee a stable connection. [[1]](#ref-1)<br>
 * Older Arduino's bootloader might take around 4 to 8 seconds to initialize. Extend the sleep time to 10 seconds in that case. [[1]](#ref-1)<br>
-* Date-Time format used: "%Y-%m-%d %H:%M:%S.%f".<br>
+* Date-Time format used: %Y-%m-%d %H:%M:%S.%f.<br>
 * The bad value handling is skipped as they are dealt in preprocessing step.<br>
 
 ### References: 
