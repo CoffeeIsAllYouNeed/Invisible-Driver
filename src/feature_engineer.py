@@ -77,7 +77,6 @@ class FeatureEngineer:
         self, df_pivot: pd.DataFrame
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         try:
-            # Drop the timestamp metadata safely to isolate numerical signal columns
             signal_columns = df_pivot.drop(columns=["timestamp_window"], errors="ignore")
             X = signal_columns.values
 
