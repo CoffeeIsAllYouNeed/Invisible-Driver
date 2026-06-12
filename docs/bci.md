@@ -33,7 +33,7 @@ A Brain–Computer Interface (BCI) establishes a direct communication pathway be
 An electroencephalogram (EEG) is a test that measures electrical activity in the brain.[2] This test also is called an EEG.
 
 <p align="center">
-  <img src="https://www.mayoclinic.org/-/media/kcms/gbs/patient-consumer/images/2017/10/11/14/51/bn7_eeg_results-8col.jpg" width="400" alt="EEG diagram"/>
+  <img src="https://ars.els-cdn.com/content/image/3-s2.0-B9780128044902000026-f02-01-9780128044902.jpg" width="400" alt="EEG diagram"/>
   <br>
   <em>Figure 2: Electroencephalogram(EEG)</em>
 </p>
