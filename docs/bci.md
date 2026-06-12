@@ -20,7 +20,7 @@
 
 ### What is Brain-Computer Interface?
 
-A Brain–Computer Interface (BCI) establishes a direct communication pathway between the brain's bioelectrical activity and an external computational device, bypassing traditional neuromuscular pathways [1]. 
+A Brain–Computer Interface (BCI) establishes a direct communication pathway between the brain's bioelectrical activity and an external computational device, bypassing traditional neuromuscular pathways [[1]](#ref-1). 
 
 <p align="center">
   <img src="https://undark.org/wp-content/uploads/2020/03/gettyimages-878283608-2048x2048-1.jpg" width="400" alt="BCI diagram"/>
@@ -30,7 +30,7 @@ A Brain–Computer Interface (BCI) establishes a direct communication pathway be
 
 ### What is EEG?
 
-An electroencephalogram (EEG) is a test that measures electrical activity in the brain.[2] This test also is called an EEG.
+An electroencephalogram (EEG) is a test that measures electrical activity in the brain.[[2]](#ref-2) This test also is called an EEG.
 
 <p align="center">
   <img src="https://ars.els-cdn.com/content/image/3-s2.0-B9780128044902000026-f02-01-9780128044902.jpg" width="400" alt="EEG diagram"/>
@@ -40,5 +40,8 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
 
 ### References
 
-* [1] Wikipedia. *Brain–computer interface*. https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface
-* [2] Mayo Clinic. *EEG (electroencephalogram)*. https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875
+<a id="ref-1"></a>
+[1] Wikipedia contributors, "Brain–computer interface," *Wikipedia, The Free Encyclopedia*, [Online]. Available: https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface. [Accessed: June 12, 2026].
+
+<a id="ref-2"></a>
+[2] Mayo Clinic Staff, "EEG (electroencephalogram) - About," *Mayo Clinic*, [Online]. Available: https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875. [Accessed: June 12, 2026].
