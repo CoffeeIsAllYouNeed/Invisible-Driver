@@ -20,7 +20,6 @@ class DataValidate:
 class DataTransform:
 
     def transform(self, df: pd.DataFrame) -> pd.DataFrame:
-        # Conversion of values to float matches the array dimensions and allows ffill operations.
         df["value"] = df["value"].astype(float)
         df["timestamp"] = pd.to_datetime(df["timestamp"])
 
@@ -33,8 +32,6 @@ class DataTransform:
             drop=True
         )
 
-        # FIX: To avoid splitting a single live batch into two separate rows,
-        # we dynamically floor the first timestamp in the window and apply it to the whole batch.
         if not df.empty:
             df["timestamp_window"] = df["timestamp"].iloc[0].floor("2s")
         else:

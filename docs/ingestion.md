@@ -31,4 +31,4 @@
 ### References: 
 
 <a id="ref-1"></a>
-[1] Optiboot contributors, "optiboot.c," *GitHub Repository: Optiboot/optiboot*, [Online]. Available: [https://github.com/Optiboot/optiboot/blob/master/optiboot/bootloaders/optiboot/optiboot.c](https://github.com/Optiboot/optiboot/blob/master/optiboot/bootloaders/optiboot/optiboot.c).
+[1] Optiboot contributors, "optiboot.c," *GitHub Repository: Optiboot/optiboot*, [Online]. Available: [https://github.com/Optiboot/optiboot/blob/master/optiboot/bootloaders/optiboot/optiboot.c](https://github.com/Optiboot/optiboot/blob/master/optiboot/bootloaders/optiboot/optiboot.c).<br>

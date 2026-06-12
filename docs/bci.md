@@ -33,7 +33,7 @@ A Brain–Computer Interface (BCI) establishes a direct communication pathway be
 An electroencephalogram (EEG) is a test that measures electrical activity in the brain.[[2]](#ref-2) This test also is called an EEG.
 
 <p align="center">
-  <img src="https://ars.els-cdn.com/content/image/3-s2.0-B9780128044902000026-f02-01-9780128044902.jpg" width="400" alt="EEG diagram"/>
+  <img src="https://my.clevelandclinic.org/-/scassets/images/org/health/articles/9656-electroencephalogram-eeg" width="400" alt="EEG diagram"/>
   <br>
   <em>Figure 2: Electroencephalogram(EEG)</em>
 </p>
@@ -41,7 +41,7 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
 ### References
 
 <a id="ref-1"></a>
-[1] Wikipedia contributors, "Brain–computer interface," *Wikipedia, The Free Encyclopedia*, [Online]. Available: https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface. [Accessed: June 12, 2026].
-
+[1] Wikipedia contributors, "Brain–computer interface," *Wikipedia, The Free Encyclopedia*, [Online]. Available: https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface.<br>
 <a id="ref-2"></a>
-[2] Mayo Clinic Staff, "EEG (electroencephalogram) - About," *Mayo Clinic*, [Online]. Available: https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875. [Accessed: June 12, 2026].
+[2] Mayo Clinic Staff, "EEG (electroencephalogram) - About," *Mayo Clinic*, [Online]. Available: https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875.<br>
+[3] Cleveland Clinic Professional, "Electroencephalogram (EEG): What It Is, Purpose, Procedure & Results," *Cleveland Clinic*, [Online]. Available: [https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg](https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg).<br>
