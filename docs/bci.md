@@ -38,7 +38,7 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
   <em>Figure 2: Electroencephalogram(EEG)</em>
 </p>
 
-### References
+### References: 
 
 <a id="ref-1"></a>
 [1] Wikipedia contributors, "Brain–computer interface," *Wikipedia, The Free Encyclopedia*, [Online]. Available: https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface.<br>
