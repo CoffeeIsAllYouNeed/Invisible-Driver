@@ -26,14 +26,20 @@
   <img src="https://ars.els-cdn.com/content/image/3-s2.0-B9780128044902000026-f02-01-9780128044902.jpg" width="400" alt="Types of waves"/>
   <br>
   <em>Figure 1: Types of brain-waves</em>
-</p><br>
+</p>
+
 * For sorting, Quick Sort is implemented as it has low time complexity(Avg. Time Complexity *O(nlogn)*) and space complexity(*O(logn)*).[[3]](#ref-3)<br>
 
 ### References: 
 
 <a id="ref-1"></a>
-[1] D. Ouyang, Y. Yuan, G. Li, and Z. Guo, "The Effect of Time Window Length on EEG-Based Emotion Recognition," *Sensors*, vol. 22, no. 13, p. 4939, Jun. 2022. [Online]. Available: [https://pmc.ncbi.nlm.nih.gov/articles/PMC9269830/](https://pmc.ncbi.nlm.nih.gov/articles/PMC9269830/).<br>
+
+[1] D. Ouyang, Y. Yuan, G. Li, and Z. Guo, "The Effect of Time Window Length on EEG-Based Emotion Recognition," *Sensors*, vol. 22, no. 13, p. 4939, Jun. 2022. [Online]. Available: [https://pmc.ncbi.nlm.nih.gov/articles/PMC9269830/](https://pmc.ncbi.nlm.nih.gov/articles/PMC9269830/).
+
 <a id="ref-2"></a>
-[2] Programiz Pro, "Quick Sort Complexity," *Programiz Pro Resources*, [Online]. Available: [https://programiz.pro/resources/dsa-quick-sort-complexity/](https://programiz.pro/resources/dsa-quick-sort-complexity/).<br>
+
+[2] ScienceDirect Topics, "Brain Waves," *ScienceDirect*, [Online]. Available: [https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/brain-waves](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/brain-waves).
+
 <a id="ref-3"></a>
-[3] ScienceDirect Topics, "Brain Waves," *ScienceDirect*, [Online]. Available: [https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/brain-waves](https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/brain-waves).<br>
+
+[3] Programiz Pro, "Quick Sort Complexity," *Programiz Pro Resources*, [Online]. Available: [https://programiz.pro/resources/dsa-quick-sort-complexity/](https://programiz.pro/resources/dsa-quick-sort-complexity/).

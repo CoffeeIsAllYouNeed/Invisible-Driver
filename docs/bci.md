@@ -41,7 +41,11 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
 ### References: 
 
 <a id="ref-1"></a>
-[1] Wikipedia contributors, "Brain–computer interface," *Wikipedia, The Free Encyclopedia*, [Online]. Available: https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface.<br>
+
+[1] Wikipedia contributors, "Brain–computer interface," *Wikipedia, The Free Encyclopedia*, [Online]. Available: https://en.wikipedia.org/wiki/Brain%E2%80%93computer_interface.
+
 <a id="ref-2"></a>
-[2] Mayo Clinic Staff, "EEG (electroencephalogram) - About," *Mayo Clinic*, [Online]. Available: https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875.<br>
-[3] Cleveland Clinic Professional, "Electroencephalogram (EEG): What It Is, Purpose, Procedure & Results," *Cleveland Clinic*, [Online]. Available: [https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg](https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg).<br>
+
+[2] Mayo Clinic Staff, "EEG (electroencephalogram) - About," *Mayo Clinic*, [Online]. Available: https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875.
+
+[3] Cleveland Clinic Professional, "Electroencephalogram (EEG): What It Is, Purpose, Procedure & Results," *Cleveland Clinic*, [Online]. Available: [https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg](https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg).
