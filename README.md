@@ -18,6 +18,17 @@
 "Invisible Driver" is a BCI project, in which you can drive video-game cars using brain's EEG signals.
 </p>
 
+### Table of Contents: 
+
+| Content | Description |
+| --- | --- |
+| [Hardware](#hardware) | Hardware requirements |
+| [Software](#software) | Software requirements |
+| [Hardware Connection Steps](#hardware-connection-steps) | Steps to connect hardware |
+| [Software Connection Steps](#software-connection-steps) | Steps to connect software |
+| [Directory Structure](#directory-structure) | Repository layout |
+| [Wanna Chat?](#wanna-chat) | Contact Information |
+
 ### Hardware:  
 
 | Component | Image | Quantity |
