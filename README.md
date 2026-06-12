@@ -36,6 +36,7 @@
 ### Hardware:  
 
 <div align="center">
+
 | Component | Image | Quantity |
 | :--- | :---: | :---: |
 | **BioAmp EXG Pill** <br>*(with JST PH 2.0 connector and a header pin)* | <img src="https://5.imimg.com/data5/SELLER/Default/2025/3/496928027/TL/KJ/FM/156942136/bioamp-exg-pill-unassembled-record-publication-grade-ecg-emg-eog-or-eeg.jpg" alt="BioAmp EXG Pill" height="200"/> | 1 |
@@ -47,9 +48,10 @@
 | **Wet wipe** | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRsv88h91KOPFHaZ2LRVbLFBsSklgK8cKsKKw&s" alt="Wet Wipe" height="200"/> | 1 |
 | **Brain BioAmp Band** <br>*(Optional)* | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTSStS1rGSGPOKB8LvksVjaPrnp_PpdSBoJcw&s" alt="Brain BioAmp Band" height="200"/> | 1 |
 | **Electrode Gel** <br>*(If using Brain BioAmp Band)* | <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1vwdu5_kiqXnaBjBTfNPYy9Il8SrIOLQX5w&s" alt="Electrode Gel" height="200"/> | 1 |
-</div>
----
 
+</div>
+
+---
 ### Software: 
 
 * **Arduino IDE**
