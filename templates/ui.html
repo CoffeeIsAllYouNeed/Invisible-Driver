@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>BCI Open Highway Engine Terminal</title>
+    <title>Invisible Driver - BCI Terminal</title>
     <style>
         :root {
-            --bg-base: #09090b;
-            --bg-surface: #141419;
-            --text-main: #f4f4f7;
-            --text-muted: #8a8a98;
+            --bg-base: #050507;
+            --bg-surface: #0e0e12;
+            --border-subtle: #1c1c24;
+            --text-main: #ffffff;
+            --text-muted: #71717a;
             --accent-cyan: #00ffcc;
             --accent-blue: #3b82f6;
-            --accent-red: #ff3355;
         }
 
         body {
@@ -24,116 +24,122 @@
             overflow: hidden;
         }
 
-        /* Interactive Left Side: Arcade Display Window */
-        #game-viewport {
-            width: 45%;
-            background: #111116;
-            border-right: 1px solid #2d2d38;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: inset -20px 0 30px rgba(0,0,0,0.6);
-        }
-
-        #arcadeCanvas {
-            background: #222;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
-            border-radius: 12px;
-            display: block;
-            border: 2px solid #2a2a35;
-        }
-
-        /* Right Side: Command Controls & Live Diagnostics */
+        /* Left Side: Controls & Analytics */
         #hud-panel {
-            width: 55%;
+            width: 45%;
             padding: 40px;
             display: flex;
             flex-direction: column;
-            background: var(--bg-surface);
+            background: var(--bg-base);
+            border-right: 1px solid var(--border-subtle);
             box-sizing: border-box;
-            gap: 24px;
+            gap: 28px;
             overflow-y: auto;
         }
 
-        .panel-title h2 { 
-            color: var(--accent-cyan); 
-            margin: 0 0 6px 0; 
-            font-size: 26px; 
-            font-weight: 700;
+        .panel-title h1 { 
+            color: var(--text-main); 
+            margin: 0 0 4px 0; 
+            font-size: 32px; 
+            font-weight: 800;
+            letter-spacing: -0.03em;
         }
         .panel-title p { margin: 0; color: var(--text-muted); font-size: 14px; }
 
-        .btn-row { display: flex; gap: 16px; }
+        .btn-column { display: flex; flex-direction: column; gap: 12px; }
         button {
-            flex: 1; padding: 14px 24px; font-size: 14px; font-weight: 600;
-            border: 1px solid transparent; border-radius: 8px; cursor: pointer;
-            transition: all 0.2s ease; color: #fff;
+            width: 100%; padding: 16px; font-size: 14px; font-weight: 600;
+            border: 1px solid var(--border-subtle); border-radius: 10px; cursor: pointer;
+            transition: all 0.2s ease; color: var(--text-main); background: var(--bg-surface);
         }
-        .btn-hw { background: linear-gradient(135deg, #e67e22, #d35400); border-color: #f39c12; }
-        .btn-hw:hover:not(:disabled) { box-shadow: 0 0 20px rgba(230,126,34,0.4); }
-        .btn-sim { background: linear-gradient(135deg, #3498db, #2980b9); border-color: #5dade2; }
-        .btn-sim:hover:not(:disabled) { box-shadow: 0 0 20px rgba(52,152,219,0.4); }
-        button:disabled { background: #24242b !important; border-color: #2d2d36 !important; color: #555562 !important; cursor: not-allowed; }
+        button:hover:not(:disabled) { 
+            background: #181822;
+            border-color: #3f3f46;
+        }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .metrics-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-        .metric-tile { background: #1d1d24; border: 1px solid #2d2d38; padding: 16px; border-radius: 10px; border-left: 3px solid #3c3c45; }
-        .tile-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
-        .tile-value { font-size: 20px; font-weight: 700; margin-top: 4px; }
+        .metrics-stack { display: flex; flex-direction: column; gap: 12px; }
+        .metric-tile { 
+            background: var(--bg-surface); 
+            border: 1px solid var(--border-subtle); 
+            padding: 18px; 
+            border-radius: 12px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tile-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); }
+        .tile-value { font-size: 16px; font-weight: 700; color: var(--text-main); }
         
         .status-attentive { color: var(--accent-cyan) !important; }
         .status-relaxed { color: var(--accent-blue) !important; }
 
         .oscilloscope-box {
-            flex: 1;
-            background: #0c0c0e;
+            height: 180px;
+            background: var(--bg-surface);
             border-radius: 12px;
-            border: 1px solid #23232a;
+            border: 1px solid var(--border-subtle);
             position: relative;
-            min-height: 200px;
         }
         #oscilloscopeCanvas { width: 100%; height: 100%; display: block; }
         .oscilloscope-tag { position: absolute; top: 15px; left: 15px; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); z-index: 10; }
+
+        /* Right Side: Arcade Display Window */
+        #game-viewport {
+            width: 55%;
+            background: #09090b;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #arcadeCanvas {
+            background: #111115;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 16px;
+            display: block;
+            border: 1px solid var(--border-subtle);
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-viewport">
-        <div style="color: var(--text-muted); margin-bottom: 12px; font-size: 11px; font-weight: 700; letter-spacing: 0.15em;">NEURO-DRIVE ARCHITECTURE</div>
-        <canvas id="arcadeCanvas" width="400" height="550"></canvas>
-    </div>
-
     <div id="hud-panel">
         <div class="panel-title">
-            <h2>EEG BCI Integrated Highway Racer</h2>
-            <p>Your real-time classification windows dictate engine throttle outputs and velocity profiles:</p>
+            <h1>Invisible Driver</h1>
+            <p>Drive car using brain</p>
         </div>
         
-        <div class="btn-row">
-            <button class="btn-hw" id="btn-hardware" onclick="connectPipeline('serial')">Initialize Hardware Ingest</button>
-            <button class="btn-sim" id="btn-simulation" onclick="connectPipeline('file')">Run Telemetry Simulation</button>
+        <div class="btn-column">
+            <button id="btn-hardware" onclick="connectPipeline('serial')">Run with Hardware</button>
+            <button id="btn-simulation" onclick="connectPipeline('file')">Run Simulation</button>
         </div>
 
-        <div class="metrics-container">
-            <div class="metric-tile" id="tile-cognitive" style="border-left-color: var(--accent-blue);">
+        <div class="metrics-stack">
+            <div class="metric-tile">
                 <div class="tile-label">Cognitive State</div>
                 <div id="val-state" class="tile-value">Awaiting...</div>
             </div>
-            <div class="metric-tile" style="border-left-color: var(--accent-cyan);">
-                <div class="tile-label">Throttle Vector</div>
+            <div class="metric-tile">
+                <div class="tile-label">Throttle Profile</div>
                 <div id="val-action" class="tile-value">None</div>
             </div>
-            <div class="metric-tile" style="border-left-color: #ffd700;">
-                <div class="tile-label">Raw Signal</div>
+            <div class="metric-tile">
+                <div class="tile-label">EEG Reading</div>
                 <div id="val-signal" class="tile-value">---</div>
             </div>
         </div>
 
         <div class="oscilloscope-box">
-            <div class="oscilloscope-tag">Live Raw EEG Trace (Normalized Window)</div>
+            <div class="oscilloscope-tag">Signal Graph Stream</div>
             <canvas id="oscilloscopeCanvas"></canvas>
         </div>
+    </div>
+
+    <div id="game-viewport">
+        <canvas id="arcadeCanvas" width="400" height="550"></canvas>
     </div>
 
     <script>
@@ -147,8 +153,8 @@
         const maxTraceSamples = 120;
         let globalCognitiveState = "RELAXED";
 
-        // --- INBUILT OPEN HIGHWAY ENGINE RULES ---
-        let car = { x: 175, y: 430, width: 45, height: 80, targetSpeed: 0, speed: 0, maxVelocity: 22 };
+        // --- FIXED STRAIGHT LINE HIGHWAY ENGINE ---
+        let car = { x: 177, y: 430, width: 45, height: 80, targetSpeed: 0, speed: 0, maxVelocity: 22 };
         let score = 0;
         let totalOdometer = 0;
         let animatedLineOffset = 0;
@@ -159,37 +165,34 @@
             totalOdometer += car.speed;
             animatedLineOffset = (animatedLineOffset + car.speed) % 80;
 
-            // Simple score calculation based on distance traveled
             if (car.speed > 1) {
                 score += Math.floor(car.speed * 0.1);
             }
 
-            // High-velocity highway lane sway physics simulation
-            if (car.speed > 2) {
-                car.x = 175 + Math.sin(totalOdometer * 0.015) * 40;
-            }
+            // CAR POSITION FIX: Locked cleanly to centerline coordinates (no sway calculation)
+            car.x = 177; 
         }
 
         function renderArcadeGraphics() {
             // Asphalt Track Base
-            ctx.fillStyle = "#282c34";
+            ctx.fillStyle = "#0e0e12";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Side Shoulders
-            ctx.fillStyle = "#1e2127";
+            ctx.fillStyle = "#050507";
             ctx.fillRect(0, 0, 30, canvas.height);
             ctx.fillRect(canvas.width - 30, 0, 30, canvas.height);
 
-            // Red/White curbing tiles
-            ctx.fillStyle = "#e06c75"; 
+            // Subtle dark curbing layout markers
+            ctx.fillStyle = "#1c1c24"; 
             for(let y = (animatedLineOffset % 40) - 40; y < canvas.height; y += 40) {
                 ctx.fillRect(25, y, 5, 20);
                 ctx.fillRect(canvas.width - 30, y, 5, 20);
             }
 
-            // Central lane dashed partitions
-            ctx.strokeStyle = "#ffffff";
-            ctx.lineWidth = 3;
+            // Central lane dashed lines
+            ctx.strokeStyle = "#3f3f46";
+            ctx.lineWidth = 2;
             ctx.setLineDash([30, 50]);
             ctx.lineDashOffset = -animatedLineOffset;
 
@@ -198,7 +201,7 @@
             }
             ctx.setLineDash([]); 
 
-            // Draw Player Supercar
+            // Draw Player Supercar chassis
             ctx.save();
             ctx.shadowBlur = car.speed > 5 ? 25 : 5;
             
@@ -207,31 +210,30 @@
             ctx.fillStyle = colorAccent;
             
             ctx.beginPath();
-            ctx.roundRect(car.x, car.y, car.width, car.height, 8);
+            ctx.roundRect(car.x, car.y, car.width, car.height, 6);
             ctx.fill();
             ctx.restore();
 
-            // Cockpit canopy accent line elements
-            ctx.fillStyle = "#0c1017";
+            // Canopy glass elements
+            ctx.fillStyle = "#050507";
             ctx.fillRect(car.x + 8, car.y + 22, car.width - 16, 25);
-            ctx.fillStyle = "#fff"; 
-            ctx.fillRect(car.x + car.width/2 - 2, car.y, 4, 15);
+            ctx.fillStyle = "#ffffff"; 
+            ctx.fillRect(car.x + car.width/2 - 1, car.y, 2, 12);
 
-            // HUD Data Overlays
-            ctx.fillStyle = "#fff";
-            ctx.font = "bold 20px monospace";
-            ctx.fillText(`SCORE: ${score}`, 45, 40);
-            ctx.font = "14px system-ui";
+            // Dashboard Overlay fonts
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 16px monospace";
+            ctx.fillText(`SCORE: ${score}`, 45, 45);
+            ctx.font = "12px system-ui";
             ctx.fillStyle = lookupStyle('--text-muted');
-            ctx.fillText(`SPEED: ${Math.round(car.speed * 12)} KM/H`, 45, 62);
+            ctx.fillText(`SPEED: ${Math.round(car.speed * 12)} KM/H`, 45, 65);
         }
 
-        // --- WEBSOCKET ENGINE CONNECTION ---
+        // --- PIPELINE WEBSOCKET CORE HANDSHAKE ---
         function connectPipeline(streamMode) {
             document.getElementById('btn-hardware').disabled = true;
             document.getElementById('btn-simulation').disabled = true;
             
-            // Reset state
             car.speed = 0; car.targetSpeed = 0; score = 0; totalOdometer = 0;
 
             const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
@@ -249,28 +251,25 @@
                 const elementState = document.getElementById('val-state');
                 elementState.innerText = packet.state;
                 elementState.className = "tile-value " + (packet.state === "ATTENTIVE" ? "status-attentive" : "status-relaxed");
-                document.getElementById('tile-cognitive').style.borderLeftColor = packet.state === "ATTENTIVE" ? lookupStyle('--accent-cyan') : lookupStyle('--accent-blue');
 
-                document.getElementById('val-action').innerText = packet.action === "ACCELERATE" ? "THROTTLE ON" : "BRAKING";
-                document.getElementById('val-signal').innerText = packet.signal ? Number(packet.signal).toFixed(1) : "---";
+                document.getElementById('val-action').innerText = packet.action === "ACCELERATE" ? "THROTTLE ON" : "OFF (BRAKING)";
+                document.getElementById('val-signal').innerText = packet.signal ? Number(packet.signal).toFixed(0) : "---";
 
                 if (packet.signal !== undefined) {
                     signalHistory.push(Number(packet.signal));
                     if (signalHistory.length > maxTraceSamples) signalHistory.shift();
                 }
 
-                // Translate incoming model classification directly to velocity targets
                 if (packet.action === "ACCELERATE") {
                     car.targetSpeed = car.maxVelocity;
                 } else {
-                    car.targetSpeed = 2; // Decelerate smoothly to cruise speed
+                    car.targetSpeed = 1;
                 }
             };
 
             socket.onclose = function() {
                 document.getElementById('btn-hardware').disabled = false;
                 document.getElementById('btn-simulation').disabled = false;
-                console.log("WebSocket pipeline stream disconnected cleanly.");
             };
         }
 
@@ -287,7 +286,7 @@
 
         function renderOscilloscope() {
             oscCtx.clearRect(0, 0, oscCanvas.width, oscCanvas.height);
-            oscCtx.strokeStyle = "#1b1b22";
+            oscCtx.strokeStyle = "#161622";
             oscCtx.lineWidth = 1;
             for(let i = 1; i < 4; i++) {
                 let currentY = (oscCanvas.height / 4) * i;
@@ -297,7 +296,7 @@
             
             oscCtx.beginPath();
             oscCtx.strokeStyle = globalCognitiveState === "ATTENTIVE" ? lookupStyle('--accent-cyan') : lookupStyle('--accent-blue');
-            oscCtx.lineWidth = 2;
+            oscCtx.lineWidth = 1.5;
             for (let i = 0; i < signalHistory.length; i++) {
                 const targetX = (oscCanvas.width / (maxTraceSamples - 1)) * i;
                 const targetY = oscCanvas.height - ((signalHistory[i] / 1023) * oscCanvas.height);
@@ -306,7 +305,6 @@
             oscCtx.stroke();
         }
 
-        // --- GLOBAL RAF SCHEDULER ---
         function processingLoop() {
             progressEngineTicks();
             renderArcadeGraphics();
