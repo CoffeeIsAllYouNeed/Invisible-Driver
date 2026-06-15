@@ -189,7 +189,6 @@ Invisible-Driver/
 <p align="center">
   <img src="img/game.png" width="800" alt="Game"/>
   <br>
-  <em>Figure 1: Game</em>
 </p>
 
 ---
