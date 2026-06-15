@@ -31,7 +31,7 @@ As per research, 2 seconds Time-Window is ideal for emotion recognition.[[1]](#r
 * Also, user can observe the predicted cognitive state, throttle mode, and eeg readings on the game platform and on EEG graph.
 
 <p align="center">
-  <img src="../img/game.png" width="400" alt="Game"/>
+  <img src="../img/game.png" width="800" alt="Game"/>
   <br>
   <em>Figure 1: Game</em>
 </p>
