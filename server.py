@@ -4,9 +4,9 @@ import json
 import os
 import random
 
+import pandas as pd
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
-import pandas as pd
 
 from src.feature_engineer import FeatureEngineer
 from src.ingest import Ingestion
@@ -114,7 +114,8 @@ async def pipeline_websocket(websocket: WebSocket):
                             cognitive_state = "RELAXED"
                             action_signal = "NONE"
                             print(
-                                "🎲 RANDOMIZER: Intermittent Relaxed interval forced!"
+                                "🎲 RANDOMIZER: Intermittent Relaxed "
+                                "interval forced!"
                             )
                         else:
                             if final_prediction == "Attentive State":
@@ -138,7 +139,8 @@ async def pipeline_websocket(websocket: WebSocket):
 
                 except Exception as batch_err:
                     print(
-                        f"Pipeline inference skipped for this window: {batch_err}"
+                        "Pipeline inference skipped for this window: "
+                        f"{batch_err}"
                     )
 
         except Exception as e:
@@ -171,3 +173,4 @@ async def pipeline_websocket(websocket: WebSocket):
             stream_task.cancel()
         if ingestion_system:
             ingestion_system.close()
+
