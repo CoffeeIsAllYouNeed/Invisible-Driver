@@ -150,19 +150,18 @@ Invisible-Driver/
 │   ├── data.csv             # Sample 5 min data for simulation.
 │   └── signal.parquet       # Live data.
 ├── docs/                    # documentation.
-│   ├── eeg.md               # documentation for EEG signal processing.
 │   ├── feature_engineer.md  # documentation for feature engineering.
-│   ├── hardware.md          # documentation for hardware setup and microcontrollers.
 │   ├── ingestion.md         # documentation for data ingestion.
-│   ├── pipeline.md          # documentation for the overall system pipeline.
 │   ├── predict.md           # documentation for model training.
 │   ├── preprocess.md        # documentation for data preprocessing.
-│   ├── reproducible.md      # documentation for reproducible results.
 │   └── UPDATES.md           # Updates documentation.
 ├── hardware/                # hardware scripts.
 │   └── eeg.ino              # Arduino C++ sketch for live EEG data fetch.
 ├── model/                   # Stores pre-trained models.
 │   └── model.pkl            # Pre-trained unsupervised model.
+├── notebooks/               # Jupyter notebooks for exploration and prototyping.
+│   ├── eda.ipynb            # Exploratory Data Analysis.
+│   └── prediction.ipynb     # Unsupervised model.
 ├── src/                     # Pipeline modules.
 │   ├── __init__.py
 │   ├── feature_engineer.py  # Pipeline step: Feature engineering.
@@ -174,7 +173,6 @@ Invisible-Driver/
 │   └── ui.html              # Racing car UI
 ├── .gitignore
 ├── LICENSE                  # Open-source MIT distribution terms
-├── prediction.ipynb         # Unsupervised model.
 ├── README.md                # Project overview.
 ├── requirements.txt         # Dependencies.
 ├── run.py                   # Pipeline run file.
