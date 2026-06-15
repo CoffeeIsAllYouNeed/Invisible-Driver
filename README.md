@@ -180,6 +180,20 @@ Invisible-Driver/
 ```
 ---
 
+### How to play? 
+
+* User can setup the hardware & Invisible driver repository to play the game.
+* In absence of hardware one can simulate with the available data in repository.
+* Also, user can observe the predicted cognitive state, throttle mode, and eeg readings on the game platform and on EEG graph.
+
+<p align="center">
+  <img src="img/game.png" width="800" alt="Game"/>
+  <br>
+  <em>Figure 1: Game</em>
+</p>
+
+---
+
 ### Wanna Chat?: 
 
 * [My LinkedIn](https://www.linkedin.com/in/vrushal-more-2a5067330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
