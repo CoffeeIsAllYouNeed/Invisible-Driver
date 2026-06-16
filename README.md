@@ -1,7 +1,7 @@
 ![main](img/header.png)
 
 
-<h1 align="center">Drive Car using Brain</h1>
+<h1 align="center">Drive car using thoughts</h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?style=flat&logo=python&logoColor=white" alt="Python" />
@@ -181,6 +181,13 @@ Invisible-Driver/
 ├── server.py                # FastAPI server.
 ```
 ---
+
+### Pipeline: 
+
+<p align="center">
+  <img src="img/pipeline.png" width="800" alt="Pipeline"/>
+  <br>
+</p>
 
 ### How to play? 
 
