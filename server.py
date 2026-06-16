@@ -54,7 +54,7 @@ async def pipeline_websocket(websocket: WebSocket):
                         target_path, engine="pyarrow", index=False
                     )
                 else:
-                    print(f"Simulator target missing at: {SIMULATOR_FILE}")
+                    print(f"Simulator File not found: {SIMULATOR_FILE}")
                     return
 
             ingestion_system = Ingestion(
@@ -70,7 +70,7 @@ async def pipeline_websocket(websocket: WebSocket):
 
             raw_stream = ingestion_system.stream_raw_data()
             print(
-                f"Pipeline active via mode: {mode}. Beginning inference loops."
+                f"Pipeline active via mode: {mode}."
             )
 
             while True:
@@ -90,7 +90,7 @@ async def pipeline_websocket(websocket: WebSocket):
                         )
                     except StopIteration:
                         if not window_buffer:
-                            print("Data stream file finished.")
+                            print("Data stream file completed.")
                             return
                         break
                     await asyncio.sleep(0.002)
@@ -114,8 +114,7 @@ async def pipeline_websocket(websocket: WebSocket):
                             cognitive_state = "RELAXED"
                             action_signal = "NONE"
                             print(
-                                "🎲 RANDOMIZER: Intermittent Relaxed "
-                                "interval forced!"
+                                "Random output override triggered for demo purposes."
                             )
                         else:
                             if final_prediction == "Attentive State":
@@ -133,13 +132,13 @@ async def pipeline_websocket(websocket: WebSocket):
 
                         await websocket.send_text(json.dumps(payload))
                         print(
-                            f"Live Pipeline Broadcast: {cognitive_state} -> "
-                            f"Action Sent: {action_signal}"
+                            f"STATE: {cognitive_state} -> "
+                            f"ACTION: {action_signal}"
                         )
 
                 except Exception as batch_err:
                     print(
-                        "Pipeline inference skipped for this window: "
+                        "Pipeline skipped for this window: "
                         f"{batch_err}"
                     )
 
