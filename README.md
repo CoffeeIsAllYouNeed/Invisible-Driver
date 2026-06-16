@@ -189,6 +189,8 @@ Invisible-Driver/
   <br>
 </p>
 
+---
+
 ### How to play? 
 
 * User can setup the hardware & Invisible driver repository to play the game.
@@ -205,3 +207,9 @@ Invisible-Driver/
 ### Wanna Chat?: 
 
 * [My LinkedIn](https://www.linkedin.com/in/vrushal-more-2a5067330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+
+---
+
+### References: 
+
+[1] J. Melby, "Controlling Video Game Using Brainwaves (EEG)," Instructables. Available: https://www.instructables.com/Controlling-Video-Game-Using-Brainwaves-EEG/.
