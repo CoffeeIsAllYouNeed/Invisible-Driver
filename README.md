@@ -185,7 +185,7 @@ Invisible-Driver/
 ### Pipeline: 
 
 <p align="center">
-  <img src="img/pipeline.png" width="800" alt="Pipeline"/>
+  <img src="img/pipeline.jpg" width="800" alt="Pipeline"/>
   <br>
 </p>
 
