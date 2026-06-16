@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invisible Driver - BCI Terminal</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <div id="hud-panel">
+        <div class="panel-title">
+            <h1>Invisible Driver</h1>
+            <p>Drive car using brain</p>
+        </div>
+        
+        <div class="btn-column">
+            <button id="btn-hardware" onclick="connectPipeline('serial')">Run with Hardware</button>
+            <button id="btn-simulation" onclick="connectPipeline('file')">Run Simulation</button>
+        </div>
+
+        <div class="metrics-stack">
+            <div class="metric-tile">
+                <div class="tile-label">Cognitive State</div>
+                <div id="val-state" class="tile-value">Awaiting...</div>
+            </div>
+            <div class="metric-tile">
+                <div class="tile-label">Throttle Profile</div>
+                <div id="val-action" class="tile-value">None</div>
+            </div>
+            <div class="metric-tile">
+                <div class="tile-label">EEG Reading</div>
+                <div id="val-signal" class="tile-value">---</div>
+            </div>
+        </div>
+
+        <div class="oscilloscope-box">
+            <div class="oscilloscope-tag">Signal Graph Stream</div>
+            <canvas id="oscilloscopeCanvas"></canvas>
+        </div>
+    </div>
+
+    <div id="game-viewport">
+        <canvas id="arcadeCanvas" width="400" height="550"></canvas>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

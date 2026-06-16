@@ -5,8 +5,10 @@ import os
 import random
 
 import pandas as pd
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
 from src.feature_engineer import FeatureEngineer
 from src.ingest import Ingestion
@@ -15,17 +17,19 @@ from src.preprocess import Preprocess
 
 app = FastAPI()
 
+app.mount("/static", StaticFiles(directory="templates"), name="templates_static")
+
+templates = Jinja2Templates(directory="templates")
+
 SERIAL_PORT = "COM6"
 SIMULATOR_FILE = "data/data.csv"
 MODEL_PATH = "model/model.pkl"
 TIME_WINDOW_SEC = 2.0
 
 
-@app.get("/")
-async def get_dashboard():
-    with open("templates/ui.html", "r", encoding="utf-8") as file:
-        html_content = file.read()
-    return HTMLResponse(content=html_content)
+@app.get("/", response_class=HTMLResponse)
+async def get_dashboard(request: Request):
+    return templates.TemplateResponse(request=request, name="index.html")
 
 
 @app.websocket("/pipeline_stream")
@@ -69,17 +73,13 @@ async def pipeline_websocket(websocket: WebSocket):
             prediction_layer.load_prediction_engine(model_path=MODEL_PATH)
 
             raw_stream = ingestion_system.stream_raw_data()
-            print(
-                f"Pipeline active via mode: {mode}."
-            )
+            print(f"Pipeline active via mode: {mode}.")
 
             while True:
                 window_buffer = []
                 window_start_time = asyncio.get_event_loop().time()
 
-                while (
-                    asyncio.get_event_loop().time() - window_start_time
-                ) < TIME_WINDOW_SEC:
+                while (asyncio.get_event_loop().time() - window_start_time) < TIME_WINDOW_SEC:
                     try:
                         raw_val = next(raw_stream)
                         current_ts = datetime.datetime.now().strftime(
@@ -93,6 +93,7 @@ async def pipeline_websocket(websocket: WebSocket):
                             print("Data stream file completed.")
                             return
                         break
+                    
                     await asyncio.sleep(0.002)
 
                 if not window_buffer:
@@ -113,9 +114,7 @@ async def pipeline_websocket(websocket: WebSocket):
                         if random.random() < 0.30:
                             cognitive_state = "RELAXED"
                             action_signal = "NONE"
-                            print(
-                                "Random output override triggered for demo purposes."
-                            )
+                            print("Random output override triggered for demo purposes.")
                         else:
                             if final_prediction == "Attentive State":
                                 cognitive_state = "ATTENTIVE"
@@ -131,16 +130,10 @@ async def pipeline_websocket(websocket: WebSocket):
                         }
 
                         await websocket.send_text(json.dumps(payload))
-                        print(
-                            f"STATE: {cognitive_state} -> "
-                            f"ACTION: {action_signal}"
-                        )
+                        print(f"STATE: {cognitive_state} -> ACTION: {action_signal}")
 
                 except Exception as batch_err:
-                    print(
-                        "Pipeline skipped for this window: "
-                        f"{batch_err}"
-                    )
+                    print(f"Pipeline skipped for this window: {batch_err}")
 
         except Exception as e:
             print(f"Data stream exception handled: {e}")
@@ -172,4 +165,3 @@ async def pipeline_websocket(websocket: WebSocket):
             stream_task.cancel()
         if ingestion_system:
             ingestion_system.close()
-

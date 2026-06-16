@@ -170,7 +170,9 @@ Invisible-Driver/
 │   ├── preprocess.py        # Pipeline step: Data preprocessing.
 │   └── reproducible.py      # Pipeline step: Reproducibility.
 ├── templates/
-│   └── ui.html              # Racing car UI
+│   ├── index.html           # Racing car UI structure
+│   ├── script.js            # Frontend logic, WebSocket handling & Canvas rendering
+│   └── style.css            # Cyberpunk BCI terminal styling
 ├── .gitignore
 ├── LICENSE                  # Open-source MIT distribution terms
 ├── README.md                # Project overview.
