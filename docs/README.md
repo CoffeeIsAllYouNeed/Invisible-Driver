@@ -38,6 +38,8 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
   <em>Figure 2: Electroencephalogram(EEG)</em>
 </p>
 
+---
+
 ### References: 
 
 <a id="ref-1"></a>
