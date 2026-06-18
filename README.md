@@ -1,29 +1,38 @@
 ![main](img/header.png)
 
-
-<h1 align="center">Drive car using thoughts</h1>
-
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?style=flat&logo=python&logoColor=white" alt="Python" />
   <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-4b5563?style=flat" alt="Platform Support" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
-  <img src="https://img.shields.io/badge/Contributions-Welcome-blue?style=flat" alt="Contributions Welcome" />
 </p>
 
 <p align="center">
-"Invisible Driver" is a BCI project, in which you can drive video-game cars using brain's EEG signals.
+Brain Computer Interface to drive video game cars with EEG signals. Unsupervised Learning to classify EEG signals as: "ATTENTIVE" & "RELAXED" state. 
 </p>
 
-### Table of Contents: 
+## How to play? 
+
+<p align="center">
+  <img src="img/game.png" width="800" alt="game"/>
+  <br>
+</p>
+
+* If hardware is available, complete the setup as per instructions and run the server.
+* If hardware is not available, run the server and run simulation.
+
+---
+
+## Table of Contents: 
 
 <div align="center">
 
 | Content | Description |
-| --- | --- |
+| :---: | :---: |
 | [Hardware](#hardware) | Hardware requirements |
 | [Software](#software) | Software requirements |
 | [Hardware Connection Steps](#hardware-connection-steps) | Steps to connect hardware |
@@ -33,12 +42,14 @@
 
 </div>
 
-### Hardware:  
+---
+
+## Hardware:  
 
 <div align="center">
 
 | Component | Image | Quantity |
-| :--- | :---: | :---: |
+| :---: | :---: | :---: |
 | **BioAmp EXG Pill** <br>*(with JST PH 2.0 connector and a header pin)* | <img src="https://5.imimg.com/data5/SELLER/Default/2025/3/496928027/TL/KJ/FM/156942136/bioamp-exg-pill-unassembled-record-publication-grade-ecg-emg-eog-or-eeg.jpg" alt="BioAmp EXG Pill" height="200"/> | 1 |
 | **BioAmp Cable v3** | <img src="https://store.upsidedownlabs.tech/wp-content/uploads/2022/11/1-1.jpg" alt="BioAmp Cable v3" height="200"/> | 1 |
 | **Gel Electrodes** | <img src="https://shop.openbci.com/cdn/shop/files/kendall-35mm.jpg?v=1694030384" alt="Gel Electrodes" height="200"/> | 3 |
@@ -52,45 +63,46 @@
 </div>
 
 ---
-### Software: 
+
+## Software: 
 
 * **Arduino IDE**
 * **Visual Studio Code**
-* **Google Colab**
+* **Google Colab**(Optional)
 
 ---
 
-### Hardware connection steps: 
+## Hardware connection steps: 
 
-#### Step 1: Assembly
+### Step 1: Assembly
 If your BioAmp EXG Pill did not come pre-soldered, solder the header pins and the JST PH 2.0 connector onto the board.
 
 <p align="center">
   <img src="img/assembly.jpeg" width="400" alt="Assembly Diagram" />
 </p>
 
-#### Step 2: Skin Preparation
+### Step 2: Skin Preparation
 Gently rub Nuprep Skin Preparation Gel onto your forehead and behind your earlobes to lower skin impedance and improve signal accuracy. Wipe the areas clean with a wet wipe.
 
 <p align="center">
   <img src="img/skin_preparation.png" width="400" alt="Skin Preparation" />
 </p>
 
-#### Step 3: Connecting Electrode Cable
+### Step 3: Connecting Electrode Cable
 Plug the BioAmp Cable v3 directly into the JST PH 2.0 connector on the BioAmp EXG Pill.
 
 <p align="center">
   <img src="img/connect_electrodes.png" width="400" alt="Cable Connection" />
 </p>
 
-#### Step 4: Electrode Placement
+### Step 4: Electrode Placement
 Snap the cable onto 3 gel electrodes and peel off their plastic backings. Place the **IN+** electrode on your forehead (between Fp1 and Fp2 positions). Place the **IN-** and **REF** electrodes on the bony areas behind your earlobes.
 
 <p align="center">
   <img src="img/electrode_placement.png" width="400" alt="Electrode Placement Diagram" />
 </p>
 
-#### Step 5: Connect Development Board
+### Step 5: Connect Development Board
 Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno. 
 
 **CRITICAL:** Double-check your VCC and GND connections. Reversing them can permanently damage your sensor.
@@ -105,9 +117,9 @@ Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno
 
 ---
 
-### Software connection steps: 
+## Software connection steps: 
 
-#### Step 1: Clone the Repository
+### Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/CoffeeIsAllYouNeed/Invisible-Driver 
@@ -115,34 +127,34 @@ cd Invisible-Driver
 
 ```
 
-#### Step 2: Install dependencies
+### Step 2: Install dependencies
 
 ```bash
 pip install -r requirements.txt
 
 ```
 
-#### Step 3: Flash Hardware
+### Step 3: Flash Hardware
 
 1. Connect EEG hardware module to computer via USB.
 2. Open the file located at `hardware/eeg.ino` using the Arduino IDE.
 3. Select board type and active communication port.
 4. Click **Upload** to flash the code into the hardware.
 
-#### Step 4: Run the following command in terminal
+### Step 4: Run the following command in terminal
 
 ```bash
 uvicorn server:app --reload --port 8000
 
 ```
 
-#### Step 5: Navigate to the Game Platform to Drive with Brain
+### Step 5: Navigate to the Game Platform to Drive with Brain
 
 Navigate: **`http://127.0.0.1:8000`**
 
 ---
 
-### Directory structure: 
+## Directory structure: 
 
 ```text
 Invisible-Driver/
@@ -180,9 +192,10 @@ Invisible-Driver/
 ├── run.py                   # Pipeline run file.
 ├── server.py                # FastAPI server.
 ```
+
 ---
 
-### Pipeline: 
+## Pipeline: 
 
 <p align="center">
   <img src="img/pipeline.jpg" width="800" alt="Pipeline"/>
@@ -191,25 +204,22 @@ Invisible-Driver/
 
 ---
 
-### How to play? 
+## Results: 
 
-* User can setup the hardware & Invisible driver repository to play the game.
-* In absence of hardware one can simulate with the available data in repository.
-* Also, user can observe the predicted cognitive state, throttle mode, and eeg readings on the game platform and on EEG graph.
-
-<p align="center">
-  <img src="img/game.png" width="800" alt="Game"/>
-  <br>
-</p>
+| Metric | Score |
+| :---: | :---: |
+| **Silhouette Coefficient** | `0.916088` |
+| **Davies-Bouldin Index** | `0.114000` |
+| **Calinski-Harabasz Score** | `1210.847000` |
 
 ---
 
-### References: 
-
-[1] J. Melby, "Controlling Video Game Using Brainwaves (EEG)," Instructables. Available: https://www.instructables.com/Controlling-Video-Game-Using-Brainwaves-EEG/.
-
----
-
-### Wanna Chat?: 
+## Wanna Chat?
 
 * [My LinkedIn](https://www.linkedin.com/in/vrushal-more-2a5067330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
+
+---
+
+## References: 
+
+[1] J. Melby, "Controlling Video Game Using Brainwaves (EEG)," Instructables. Available: https://www.instructables.com/Controlling-Video-Game-Using-Brainwaves-EEG/.
