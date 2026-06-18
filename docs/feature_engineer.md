@@ -22,6 +22,8 @@ Brain Computer Interface to drive video game cars with EEG signals.
 * Variance measures the dispersion of signal data points around their mean across designated time windows, which is engineered by calculating standard deviations globally over the full 2-second block as well as averaging smaller 1-second and 0.5-second sub-intervals.<br>
 * Zero-Crossing Rate(ZCR) calculates the frequency at which the mean-centered signal switches sign to indicate oscillation velocity, which is engineered by measuring sign changes across both the total 2-second duration and segmented 1-second and 0.5-second time windows.<br>
 
+---
+
 ### References: 
 
 <a id="ref-1"></a>

@@ -26,6 +26,8 @@ A Brain–Computer Interface (BCI) establishes a direct communication pathway be
   <em>Figure 1: Brain-Computer Interface(BCI)</em>
 </p>
 
+---
+
 ### What is EEG?
 
 An electroencephalogram (EEG) is a test that measures electrical activity in the brain.[[2]](#ref-2) This test also is called an EEG.

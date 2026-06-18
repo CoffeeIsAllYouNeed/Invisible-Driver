@@ -27,6 +27,8 @@ Brain Computer Interface to drive video game cars with EEG signals.
 * The bad value handling is skipped as they are dealt in preprocessing step.<br>
 * For faster processing and efficient memory usage we used C engine in CSV handling to enable low memory option & converted all values to int32.
 
+---
+
 ### References: 
 
 <a id="ref-1"></a>

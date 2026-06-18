@@ -28,6 +28,8 @@ Brain Computer Interface to drive video game cars with EEG signals.
 
 * For sorting, Quick Sort is implemented as it has low time complexity[Avg. Time Complexity: *O(nlogn)*] and Space Complexity[*O(logn)*].[[3]](#ref-3)<br>
 
+---
+
 ### References: 
 
 <a id="ref-1"></a>
