@@ -2,11 +2,11 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?style=flat&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-4b5563?style=flat" alt="Platform Support" />
+  <img src="https://img.shields.io/badge/macOS%20%7C%20Linux%20%7C%20Windows-supported-success?style=flat&colorA=2d2d2d&colorB=4a4a4a" alt="OS Supported" />
 </p>
 
 <p align="center">
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />s
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
 </p>
@@ -25,7 +25,6 @@ Brain Computer Interface to drive video game cars with EEG signals. Unsupervised
 * If hardware is available, complete the setup as per instructions and run the server.
 * If hardware is not available, run the server and run simulation.
 
----
 
 ## Table of Contents: 
 
@@ -38,11 +37,11 @@ Brain Computer Interface to drive video game cars with EEG signals. Unsupervised
 | [Hardware Connection Steps](#hardware-connection-steps) | Steps to connect hardware |
 | [Software Connection Steps](#software-connection-steps) | Steps to connect software |
 | [Directory Structure](#directory-structure) | Repository layout |
+| [References](#references) | Reference |
 | [Wanna Chat?](#wanna-chat) | Contact Information |
 
 </div>
 
----
 
 ## Hardware:  
 
@@ -62,15 +61,13 @@ Brain Computer Interface to drive video game cars with EEG signals. Unsupervised
 
 </div>
 
----
 
 ## Software: 
 
 * **Arduino IDE**
 * **Visual Studio Code**
-* **Google Colab**(Optional)
+* **Google Colab** (Optional)
 
----
 
 ## Hardware connection steps: 
 
@@ -115,7 +112,6 @@ Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno
   <img src="img/connect_development_ board.png" width="400" alt="Wiring Diagram" />
 </p>
 
----
 
 ## Software connection steps: 
 
@@ -152,7 +148,6 @@ uvicorn server:app --reload --port 8000
 
 Navigate: **`http://127.0.0.1:8000`**
 
----
 
 ## Directory structure: 
 
@@ -193,7 +188,6 @@ Invisible-Driver/
 ├── server.py                # FastAPI server.
 ```
 
----
 
 ## Pipeline: 
 
@@ -202,24 +196,24 @@ Invisible-Driver/
   <br>
 </p>
 
----
-
 ## Results: 
 
+<div align="center">
 | Metric | Score |
 | :---: | :---: |
-| **Silhouette Coefficient** | `0.916088` |
-| **Davies-Bouldin Index** | `0.114000` |
-| **Calinski-Harabasz Score** | `1210.847000` |
+| **Silhouette Coefficient** | `0.916` |
+| **Davies-Bouldin Index** | `0.114` |
+| **Calinski-Harabasz Score** | `1210.847` |
+</div>
 
----
+
+## References: 
+
+[1] J. Melby, "Controlling Video Game Using Brainwaves (EEG)," Instructables. Available: https://www.instructables.com/Controlling-Video-Game-Using-Brainwaves-EEG/.
+
 
 ## Wanna Chat?
 
 * [My LinkedIn](https://www.linkedin.com/in/vrushal-more-2a5067330?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app)
 
----
 
-## References: 
-
-[1] J. Melby, "Controlling Video Game Using Brainwaves (EEG)," Instructables. Available: https://www.instructables.com/Controlling-Video-Game-Using-Brainwaves-EEG/.

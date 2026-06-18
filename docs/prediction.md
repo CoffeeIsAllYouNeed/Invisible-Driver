@@ -1,21 +1,19 @@
 ![main](../img/header.png)
 
 
-<h1 align="center">Drive Car using Brain</h1>
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?style=flat&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/macOS%20%7C%20Linux%20%7C%20Windows-supported-success?style=flat&colorA=2d2d2d&colorB=4a4a4a" alt="OS Supported" />
+</p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11-blue?style=flat&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />s
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
-</p>
-
-<p align="center">
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
-  <img src="https://img.shields.io/badge/Contributions-Welcome-blue?style=flat" alt="Contributions Welcome" />
 </p>
 
 <p align="center">
-"Invisible Driver" is a BCI project, in which you can drive video-game cars using brain's EEG signals.
+Brain Computer Interface to drive video game cars with EEG signals. Unsupervised Learning to classify EEG signals as: "ATTENTIVE" & "RELAXED" state. 
 </p>
 
 ### Model Training: 
