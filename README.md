@@ -25,6 +25,7 @@ Brain Computer Interface to drive video game cars with EEG signals.
 * If hardware is available, complete the setup as per instructions and run the server.
 * If hardware is not available, run the server and run simulation.
 
+---
 
 ### Table of Contents: 
 
@@ -44,6 +45,7 @@ Brain Computer Interface to drive video game cars with EEG signals.
 
 </div>
 
+---
 
 ### Hardware:  
 
@@ -63,6 +65,7 @@ Brain Computer Interface to drive video game cars with EEG signals.
 
 </div>
 
+---
 
 ### Software: 
 
@@ -70,6 +73,7 @@ Brain Computer Interface to drive video game cars with EEG signals.
 * **Visual Studio Code**
 * **Google Colab** (Optional)
 
+---
 
 ### Hardware connection steps: 
 
@@ -114,6 +118,7 @@ Use jumper cables to connect the BioAmp EXG Pill to your Arduino Uno / Maker Uno
   <img src="img/connect_development_ board.png" width="400" alt="Wiring Diagram" />
 </p>
 
+---
 
 ### Software connection steps: 
 
@@ -150,6 +155,7 @@ uvicorn server:app --reload --port 8000
 
 Navigate: **`http://127.0.0.1:8000`**
 
+---
 
 ### Directory structure: 
 
@@ -190,6 +196,7 @@ Invisible-Driver/
 ├── server.py                # FastAPI server.
 ```
 
+---
 
 ### Pipeline: 
 
@@ -197,6 +204,8 @@ Invisible-Driver/
   <img src="img/pipeline.jpg" width="800" alt="Pipeline"/>
   <br>
 </p>
+
+---
 
 ### Results: 
 
@@ -210,10 +219,13 @@ Invisible-Driver/
 
 </div>
 
+---
+
 ### References: 
 
 [1] J. Melby, "Controlling Video Game Using Brainwaves (EEG)," Instructables. Available: https://www.instructables.com/Controlling-Video-Game-Using-Brainwaves-EEG/.
 
+---
 
 ### Wanna Chat?
 
