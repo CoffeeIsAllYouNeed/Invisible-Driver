@@ -40,7 +40,7 @@ $$s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))}$$
 
 ### Davies-Bouldin Index
 
-The Davies-Bouldin Index evaluates clustering models by calculating the similarity between each cluster and its most similar peer. A lower score indicates better clustering, where clusters are tight and well-separated.
+The Davies-Bouldin Index evaluates clustering models by calculating the similarity between each cluster and its most similar peer. A lower score indicates better clustering, where clusters are tight and well-separated.[[2]](#ref-2)
 
 $$R_{ij} = \frac{s_i + s_j}{d(c_i, c_j)}$$
 
@@ -50,7 +50,7 @@ $$DB = \frac{1}{k} \sum_{i=1}^{k} \max_{j \neq i} (R_{ij})$$
 
 ### Calinski-Harabasz Score
 
-The Calinski-Harabasz Score, also known as the Variance Ratio Criterion, evaluates clustering models by calculating the ratio of the sum of between-cluster dispersion to within-cluster dispersion. A higher score indicates better-defined, tighter, and more separated clusters.
+The Calinski-Harabasz Score, also known as the Variance Ratio Criterion, evaluates clustering models by calculating the ratio of the sum of between-cluster dispersion to within-cluster dispersion. A higher score indicates better-defined, tighter, and more separated clusters.[[3]](#ref-3)
 
 $$CH = \frac{\text{Tr}(B_k)}{\text{Tr}(W_k)} \times \frac{n - k}{k - 1}$$
 
