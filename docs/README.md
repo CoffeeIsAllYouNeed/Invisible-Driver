@@ -50,7 +50,7 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
 
 * Missclassification of waves are possible. We have market Alpha as 'RELAXED' state and Beta, Gamma as 'ATTENTIVE'. But Beta state is also considered as relaxed state. Hence, missclassification might occur. To avoid this situation of missclassification user can try to attain maximum relaxation to classify it as Alpha state.[[3]](#ref-3)
 
-* Various regions of the brain do not emit the same brain wave frequency simultaneously. An EEG signal between electrodes placed on the scalp consists of many waves with different characteristics. The large amount of data received from even one single EEG recording makes interpretation difficult.[[3]](#ref-3)
+* Various regions of the brain do not emit the same brain wave frequency simultaneously. The large amount of data received from even one single EEG recording makes interpretation difficult.[[3]](#ref-3)
 
 ---
 
