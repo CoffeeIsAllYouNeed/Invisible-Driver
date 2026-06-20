@@ -40,6 +40,11 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
 
 ---
 
+### Note: 
+
+* Missclassification of waves are possible. We have market Alpha as 'RELAXED' state and Beta, Gamma as 'ATTENTIVE'. But Beta state is also considered as relaxed state. Hence, missclassification might occur. To avoid this situation of missclassification user can try to attain maximum relaxation to classify it as Alpha state.[[3]](#ref-3)
+
+
 ### References: 
 
 <a id="ref-1"></a>
@@ -50,4 +55,8 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
 
 [2] Mayo Clinic Staff, "EEG (electroencephalogram) - About," *Mayo Clinic*, [Online]. Available: https://www.mayoclinic.org/tests-procedures/eeg/about/pac-20393875.
 
-[3] Cleveland Clinic Professional, "Electroencephalogram (EEG): What It Is, Purpose, Procedure & Results," *Cleveland Clinic*, [Online]. Available: [https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg](https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg).
+<a id="ref-3"></a>
+
+[3] "Brain Waves," ScienceDirect Topics, Agricultural and Biological Sciences, [Online]. Available: https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/brain-waves. 
+
+[4] Cleveland Clinic Professional, "Electroencephalogram (EEG): What It Is, Purpose, Procedure & Results," *Cleveland Clinic*, [Online]. Available: [https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg](https://my.clevelandclinic.org/health/diagnostics/9656-electroencephalogram-eeg).
