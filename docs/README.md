@@ -16,6 +16,12 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
+### What are Brain Waves?
+
+Brain waves refer to the electrical activity of the brain, characterized by different frequencies ranging from 0.1 to over 100 Hz, with specific classes including beta, gamma, alpha, theta, and delta waves, each associated with varying states of alertness, cognitive activity, and sleep.[[3]](#ref-3)
+
+---
+
 ### What is Brain-Computer Interface?
 
 A Brain–Computer Interface (BCI) establishes a direct communication pathway between the brain's bioelectrical activity and an external computational device, bypassing traditional neuromuscular pathways [[1]](#ref-1). 
