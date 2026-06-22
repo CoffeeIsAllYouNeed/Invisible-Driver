@@ -15,6 +15,10 @@
 <em>Brain Computer Interface to drive video game cars with EEG signals.</em>
 </p>
 
+FOR **DETAILED DOCUMENTATION** VISIT [**HERE**](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/tree/main/docs)
+
+---
+
 ### How to play? 
 
 <p align="center">
