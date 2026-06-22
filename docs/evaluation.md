@@ -21,7 +21,7 @@ Brain Computer Interface to drive video game cars with EEG signals.
 <div align="center">
 
 | Metric | Score |
-| :: | :: |
+| :---: | :---: |
 | **Silhouette Coefficient** | `0.916` |
 | **Davies-Bouldin Index** | `0.114` |
 | **Calinski-Harabasz Score** | `1210.847` |

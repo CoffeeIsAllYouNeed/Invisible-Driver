@@ -16,13 +16,12 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
-### What are Brain Waves?
+## What are Brain Waves?
 
 Brain waves refer to the electrical activity of the brain, characterized by different frequencies ranging from 0.1 to over 100 Hz, with specific classes including beta, gamma, alpha, theta, and delta waves, each associated with varying states of alertness, cognitive activity, and sleep.[[3]](#ref-3)
 
----
 
-### What is Brain-Computer Interface?
+## What is Brain-Computer Interface?
 
 A Brain–Computer Interface (BCI) establishes a direct communication pathway between the brain's bioelectrical activity and an external computational device, bypassing traditional neuromuscular pathways [[1]](#ref-1). 
 
@@ -32,9 +31,7 @@ A Brain–Computer Interface (BCI) establishes a direct communication pathway be
   <em>Figure 1: Brain-Computer Interface(BCI)</em>
 </p>
 
----
-
-### What is EEG?
+## What is EEG?
 
 An electroencephalogram (EEG) is a test that measures electrical activity in the brain.[[2]](#ref-2) This test also is called an EEG.
 
@@ -44,17 +41,14 @@ An electroencephalogram (EEG) is a test that measures electrical activity in the
   <em>Figure 2: Electroencephalogram(EEG)</em>
 </p>
 
----
 
-### Note: 
+## Note: 
 
 * Missclassification of waves are possible. We have market Alpha as 'RELAXED' state and Beta, Gamma as 'ATTENTIVE'. But Beta state is also considered as relaxed state. Hence, missclassification might occur. To avoid this situation of missclassification user can try to attain maximum relaxation to classify it as Alpha state.[[3]](#ref-3)
 
 * Various regions of the brain do not emit the same brain wave frequency simultaneously. The large amount of data received from even one single EEG recording makes interpretation difficult.[[3]](#ref-3)
 
----
-
-### References: 
+## References: 
 
 <a id="ref-1"></a>
 
