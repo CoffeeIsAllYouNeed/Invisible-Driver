@@ -5,6 +5,4 @@ scikit-learn
 seaborn
 torch
 pyserial
-fastapi
-uvicorn[standard]
-jinja2
+fastapi[standard]
