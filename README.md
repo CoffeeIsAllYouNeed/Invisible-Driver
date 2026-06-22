@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-<em>Brain Computer Interface to drive video game cars with EEG signals.<em>
+<em>Brain Computer Interface to drive video game cars with EEG signals.</em>
 </p>
 
 ### How to play? 
