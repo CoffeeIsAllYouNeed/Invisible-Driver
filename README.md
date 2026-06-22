@@ -15,11 +15,6 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
-### Built With:
-
-* <img src="https://img.shields.io/github/languages/top/CoffeeIsAllYouNeed/Invisible-Driver?style=for-the-badge&color=005571" alt="Top Language" />
-* <img src="https://img.shields.io/github/languages/count/CoffeeIsAllYouNeed/Invisible-Driver?style=for-the-badge&color=212529" alt="Languages Count" />  
-
 ### How to play? 
 
 <p align="center">
