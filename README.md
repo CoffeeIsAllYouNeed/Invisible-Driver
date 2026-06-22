@@ -187,7 +187,10 @@ Invisible-Driver/
 │   ├── data.csv             # Sample 5 min data for simulation.
 │   └── signal.parquet       # Live data.
 ├── docs/                    # documentation.
+│   ├── evaluation.md        # documentation for evaluation method & results.
 │   ├── feature_engineer.md  # documentation for feature engineering.
+│   ├── game.md              # documentation for game logic.
+│   ├── hardware.md          # documentation for hardware & data collection.
 │   ├── ingestion.md         # documentation for data ingestion.
 │   ├── predict.md           # documentation for model training.
 │   ├── preprocess.md        # documentation for data preprocessing.
