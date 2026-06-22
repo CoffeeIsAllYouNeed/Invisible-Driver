@@ -256,10 +256,6 @@ Invisible-Driver/
 
 ---
 
-FOR DETAILED DOCUMENTATION VISIT [HERE](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/tree/main/docs).
-
----
-
 ### References: 
 
 <a id="ref-1"></a>
