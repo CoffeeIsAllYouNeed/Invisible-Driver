@@ -7,13 +7,13 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/FastAPI-005571?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/github/stars/CoffeeIsAllYouNeed/Invisible-Driver?style=flat&logo=github&color=005571" alt="GitHub Stars" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
 </p>
 
 <p align="center">
-Brain Computer Interface to drive video game cars with EEG signals. 
+<em>Brain Computer Interface to drive video game cars with EEG signals.</em> 
 </p>
 
 ## Data Preprocess: 
