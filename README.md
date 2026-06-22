@@ -192,9 +192,9 @@ Invisible-Driver/
 │   ├── game.md              # documentation for game logic.
 │   ├── hardware.md          # documentation for hardware & data collection.
 │   ├── ingestion.md         # documentation for data ingestion.
-│   ├── prediction.md           # documentation for model training.
+│   ├── prediction.md        # documentation for model training.
 │   ├── preprocess.md        # documentation for data preprocessing.
-│   └── README.md           # Updates documentation.
+│   └── README.md            # Updates documentation.
 ├── hardware/                # hardware scripts.
 │   └── eeg.ino              # Arduino C++ sketch for live EEG data fetch.
 ├── model/                   # Stores pre-trained models.
