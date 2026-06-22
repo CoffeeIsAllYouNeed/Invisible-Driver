@@ -22,7 +22,7 @@
 * The BioAmp EXG Pill amplifies these signal up into the 0–5 V range.<br>
 * Arduino / Micro-controller's ADC converts the analog signal into $1,024$ digital signal ($2^{10}$) which is fed into pipeline.<br>
 
-**NOTE:** There is no need to convert this values to voltage again because a 10-bit ADC value ($0$ to $1023$) is a direct linear reflection of the voltage ($0\text{V}$ to $5\text{V}$), the mathematical relationships, patterns, peaks, and frequencies remain exactly the same. Hence, machine learning model can recognize these patterns well and cluster them.<br>
+**NOTE:** There is no need to convert these values to voltage again because a 10-bit ADC value ($0$ to $1023$) is a direct linear reflection of the voltage ($0\text{V}$ to $5\text{V}$), the mathematical relationships, patterns, peaks, and frequencies remain exactly the same. Hence, machine learning model can recognize these patterns well and cluster them.<br>
 
 ## References: 
 
