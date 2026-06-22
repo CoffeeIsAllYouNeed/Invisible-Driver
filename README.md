@@ -232,9 +232,9 @@ Invisible-Driver/
 
 | Metric | Score |
 | :---: | :---: |
-| **Silhouette Coefficient** | `0.916` |
-| **Davies-Bouldin Index** | `0.114` |
-| **Calinski-Harabasz Score** | `1210.847` |
+| **Silhouette Coefficient (↑)** | `0.916` |
+| **Davies-Bouldin Index (↓)** | `0.114` |
+| **Calinski-Harabasz Score (↑)** | `1210.847` |
 
 </div>
 
