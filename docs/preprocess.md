@@ -16,7 +16,7 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
-### Data Preprocess: 
+## Data Preprocess: 
 
 * As per research, 2 seconds Time-Window is ideal for emotion recognition.[[1]](#ref-1) Hence, data is collected continuosly for 2 seconds interval and then further predictions are done.<br>
 * Each record of 2s-TW will consists multiple signal values. This will be helpful to understand the pattern of wave fluctuation and classify waves as:  Alpha, Beta, Gammma.[[2]](#ref-2)<br>
@@ -28,9 +28,9 @@ Brain Computer Interface to drive video game cars with EEG signals.
 
 * For sorting, Quick Sort is implemented as it has low time complexity[Avg. Time Complexity: *O(nlogn)*] and Space Complexity[*O(logn)*].[[3]](#ref-3)<br>
 
----
 
-### References: 
+
+## References: 
 
 <a id="ref-1"></a>
 

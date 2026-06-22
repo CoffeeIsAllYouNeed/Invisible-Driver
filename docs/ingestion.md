@@ -16,7 +16,7 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
-### Data Ingestion: 
+## Data Ingestion: 
 
 * Data Ingestion is responsible for fetching the data from hardware BCI setup.<br>
 * When hardware available: It stores the data in parquet format for memory efficiency.<br>
@@ -27,9 +27,9 @@ Brain Computer Interface to drive video game cars with EEG signals.
 * The bad value handling is skipped as they are dealt in preprocessing step.<br>
 * For faster processing and efficient memory usage we used C engine in CSV handling to enable low memory option & converted all values to int32.
 
----
 
-### References: 
+
+## References: 
 
 <a id="ref-1"></a>
 

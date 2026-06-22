@@ -16,7 +16,7 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
-### Model Training: 
+## Model Training: 
 
 * For **Model selection**, we tested unsupervised learning methods like KMeans, Gaussian Mixture Model, Agglomerative clustering, DBSCAN.Out of which **DBSCAN** performed highest with **Silhouette Coefficient of 0.53**.<br>
 * Scaler used: Standard scalar.<br>

@@ -16,13 +16,13 @@
 Brain Computer Interface to drive video game cars with EEG signals. 
 </p>
 
-### Why car game? 
+## Why car game? 
 
 As per research, 2 seconds Time-Window is ideal for emotion recognition.[[1]](#ref-1) Hence, data is collected continuosly for 2 seconds interval and then state predictions are done. Games like flappy bird, dino jump require smaller reaction interval. Thus they aren't suitable for BCI game. Hence, the car game where the reaction time is much higher. 
 
----
 
-### How to play? 
+
+## How to play? 
 
 * User can setup the hardware & Invisible driver repository to play the game.
 * In absence of hardware one can simulate with the available data in repository.
@@ -34,9 +34,9 @@ As per research, 2 seconds Time-Window is ideal for emotion recognition.[[1]](#r
   <em>Figure 1: Game</em>
 </p>
 
----
 
-### References: 
+
+## References: 
 
 <a id="ref-1"></a>
 
