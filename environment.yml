@@ -10,8 +10,10 @@ dependencies:
   - numpy
   - scikit-learn
   - seaborn
-  - pytorch          
+  - pytorch
   - pyserial
   - pip
   - pip:
     - fastapi[standard]
+    - pytest       
+    - httpx        
