@@ -40,6 +40,9 @@ jobs:
 
     - name: Run ML Pipeline Sanity Tests & Generate Coverage
       run: |
+        # Explicitly install setuptools to fix the legacy pkg_resources issue
+        pip install setuptools
+        
         # Runs pytest and targets the src/ folder for coverage metrics
         pytest --cov=src test_pipeline.py
         
