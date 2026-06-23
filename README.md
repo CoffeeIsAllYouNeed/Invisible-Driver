@@ -7,7 +7,10 @@
 
 <p align="center">
   <img src="https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/actions/workflows/python-package-conda.yml/badge.svg" alt="Python Package using Conda Status" />
-  <img src="https://img.shields.io/badge/Tests-Passing-brightgreen?style=flat&logo=pytest" alt="Tests Passing" />
+  <img src="https://img.shields.io/badge/Pipeline_Tests-Passing-brightgreen?style=flat&logo=pytest" alt="Pipeline Tests Passing" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/github/stars/CoffeeIsAllYouNeed/Invisible-Driver?style=flat&logo=github&color=005571" alt="GitHub Stars" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
@@ -185,6 +188,9 @@ Navigate: **`http://127.0.0.1:8000`**
 
 ```text
 Invisible-Driver/
+├── .github/
+│   └── workflows/
+│       └── python-package-conda.yml # CI pipeline configuration.
 ├── data/                    # Stores sample data & live data.
 │   ├── data.csv             # Sample 5 min data for simulation.
 │   └── signal.parquet       # Live data.
@@ -216,11 +222,13 @@ Invisible-Driver/
 │   ├── script.js            # Frontend logic, WebSocket handling & Canvas rendering
 │   └── style.css            # Cyberpunk BCI terminal styling
 ├── .gitignore
+├── environment.yml          # Conda environment configuration.
 ├── LICENSE                  # Open-source MIT distribution terms
 ├── README.md                # Project overview.
 ├── requirements.txt         # Dependencies.
 ├── run.py                   # Pipeline run file.
 ├── server.py                # FastAPI server.
+└── test_pipeline.py         # Pipeline tests for CI runner execution.
 ```
 
 
