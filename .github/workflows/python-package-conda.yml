@@ -10,9 +10,6 @@ jobs:
     permissions:
       contents: write
 
-    strategy:
-      max-parallel: 5
-
     steps:
     - uses: actions/checkout@v4
 
@@ -38,10 +35,10 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Run ML Pipeline Sanity Tests & Generate Coverage Data
+    - name: Run Full Test Suite & Generate Coverage Data
       run: |
-        # This creates a hidden file (.coverage) containing all your metrics
-        pytest --cov=src test_pipeline.py
+        # This creates a hidden file (.coverage) containing all your metrics for the whole project
+        pytest --cov=src .
 
     - name: Generate Coverage Badge Asset
       run: |
