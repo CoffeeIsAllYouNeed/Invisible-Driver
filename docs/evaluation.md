@@ -7,14 +7,16 @@
 </p>
 
 <p align="center">
+  <img src="https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/actions/workflows/python-package-conda.yml/badge.svg" alt="Python Package using Conda Status" />
+  <img src="https://img.shields.io/badge/Pipeline_Tests-Passing-brightgreen?style=flat&logo=pytest" alt="Pipeline Tests Passing" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/github/stars/CoffeeIsAllYouNeed/Invisible-Driver?style=flat&logo=github&color=005571" alt="GitHub Stars" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat" alt="License MIT" />
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
 </p>
 
-<p align="center">
-<em>Brain Computer Interface to drive video game cars with EEG signals.</em>
-</p>
 
 ## Results: 
 

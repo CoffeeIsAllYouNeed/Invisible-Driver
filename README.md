@@ -21,11 +21,12 @@
 </p>
 
 <br>
+
 FOR **DETAILED DOCUMENTATION** VISIT [**HERE**](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/tree/main/docs)
 
 ## Grateful:
 
-❤️ "Invisible Driver" is a now a part of **awesome readme list**. Check [here](https://github.com/matiassingers/awesome-readme).
+❤️ "Invisible Driver" is a now a part of **awesome readme list**. Check [here](https://github.com/matiassingers/awesome-readme#readme).
 
 ## Play Guide: 
 
