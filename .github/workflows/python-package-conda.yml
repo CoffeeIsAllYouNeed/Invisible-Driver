@@ -40,10 +40,9 @@ jobs:
         pytest --cov=src test_pipeline.py
 
     - name: Generate Coverage Badge Asset
-      uses: tj-actions/coverage-badge-py@v2
-      with:
-        output: 'coverage.svg'
-        overwrite: 'true'
+      run: |
+        pip install "setuptools<70.0.0" coverage-badge
+        coverage-badge -f -o coverage.svg
 
     - name: Commit and Push Coverage Badge
       run: |
