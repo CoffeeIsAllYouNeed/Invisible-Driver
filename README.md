@@ -18,7 +18,7 @@
 <br><br>
 FOR **DETAILED DOCUMENTATION** VISIT [**HERE**](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/tree/main/docs)
 
-## How to play? 
+## Play Guide: 
 
 <p align="center">
   <img src="img/game.png" width="800" alt="game"/>
