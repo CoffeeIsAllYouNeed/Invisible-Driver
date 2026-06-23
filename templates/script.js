@@ -9,13 +9,12 @@ const maxTraceSamples = 120;
 let globalCognitiveState = "RELAXED";
 
 // --- FIXED STRAIGHT LINE HIGHWAY ENGINE ---
-let car = { x: 177, y: 430, width: 45, height: 80, targetSpeed: 0, speed: 0, maxVelocity: 22 };
+let car = { x: 177, y: 430, width: 46, height: 82, targetSpeed: 0, speed: 0, maxVelocity: 22 };
 let score = 0;
 let totalOdometer = 0;
 let animatedLineOffset = 0;
 
 function progressEngineTicks() {
-    // Speed transitions
     car.speed += (car.targetSpeed - car.speed) * 0.05;
     totalOdometer += car.speed;
     animatedLineOffset = (animatedLineOffset + car.speed) % 80;
@@ -23,8 +22,6 @@ function progressEngineTicks() {
     if (car.speed > 1) {
         score += Math.floor(car.speed * 0.1);
     }
-
-    // CAR POSITION FIX: Locked cleanly to centerline coordinates (no sway calculation)
     car.x = 177; 
 }
 
@@ -56,24 +53,63 @@ function renderArcadeGraphics() {
     }
     ctx.setLineDash([]); 
 
-    // Draw Player Supercar chassis
+    // --- DRAW TOP-DOWN VEHICLE (No Glow) ---
     ctx.save();
-    ctx.shadowBlur = car.speed > 5 ? 25 : 5;
-    
     let colorAccent = (globalCognitiveState === "ATTENTIVE") ? lookupStyle('--accent-cyan') : lookupStyle('--accent-blue');
-    ctx.shadowColor = colorAccent;
-    ctx.fillStyle = colorAccent;
     
-    ctx.beginPath();
-    ctx.roundRect(car.x, car.y, car.width, car.height, 6);
-    ctx.fill();
-    ctx.restore();
+    // 1. Tires (4 corner wheels)
+    ctx.fillStyle = "#18181b";
+    ctx.fillRect(car.x - 3, car.y + 10, 5, 14); // Front Left
+    ctx.fillRect(car.x + car.width - 2, car.y + 10, 5, 14); // Front Right
+    ctx.fillRect(car.x - 3, car.y + car.height - 24, 5, 16); // Rear Left
+    ctx.fillRect(car.x + car.width - 2, car.y + car.height - 24, 5, 16); // Rear Right
 
-    // Canopy glass elements
+    // 2. Side Mirrors
+    ctx.fillStyle = colorAccent;
+    ctx.fillRect(car.x - 4, car.y + 24, 5, 4);
+    ctx.fillRect(car.x + car.width - 1, car.y + 24, 5, 4);
+
+    // 3. Main Chassis/Body (Tapered top-down blueprint)
+    ctx.fillStyle = colorAccent;
+    ctx.beginPath();
+    ctx.moveTo(car.x + 8, car.y); // Front left hood
+    ctx.lineTo(car.x + car.width - 8, car.y); // Front right hood
+    ctx.lineTo(car.x + car.width, car.y + 16); // Front fender right
+    ctx.lineTo(car.x + car.width, car.y + car.height - 8); // Rear right
+    ctx.lineTo(car.x + car.width - 4, car.y + car.height); // Rear bumper right
+    ctx.lineTo(car.x + 4, car.y + car.height); // Rear bumper left
+    ctx.lineTo(car.x, car.y + car.height - 8); // Rear left
+    ctx.lineTo(car.x, car.y + 16); // Front fender left
+    ctx.closePath();
+    ctx.fill();
+
+    // 4. Windshield & Glass Greenhouse Canopy
+    ctx.fillStyle = "#111115";
+    ctx.beginPath();
+    ctx.moveTo(car.x + 8, car.y + 22); // Windshield base left
+    ctx.lineTo(car.x + car.width - 8, car.y + 22); // Windshield base right
+    ctx.lineTo(car.x + car.width - 6, car.y + 36); // Side window right
+    ctx.lineTo(car.x + car.width - 8, car.y + 54); // Rear window right
+    ctx.lineTo(car.x + 8, car.y + 54); // Rear window left
+    ctx.lineTo(car.x + 6, car.y + 36); // Side window left
+    ctx.closePath();
+    ctx.fill();
+
+    // 5. Front Hood Detailing
+    ctx.strokeStyle = "#050507";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(car.x + 12, car.y + 2);
+    ctx.lineTo(car.x + 12, car.y + 16);
+    ctx.moveTo(car.x + car.width - 12, car.y + 2);
+    ctx.lineTo(car.x + car.width - 12, car.y + 16);
+    ctx.stroke();
+
+    // 6. Rear spoiler wing profile
     ctx.fillStyle = "#050507";
-    ctx.fillRect(car.x + 8, car.y + 22, car.width - 16, 25);
-    ctx.fillStyle = "#ffffff"; 
-    ctx.fillRect(car.x + car.width/2 - 1, car.y, 2, 12);
+    ctx.fillRect(car.x + 2, car.y + car.height - 5, car.width - 4, 3);
+
+    ctx.restore();
 
     // Dashboard Overlay fonts
     ctx.fillStyle = "#ffffff";
