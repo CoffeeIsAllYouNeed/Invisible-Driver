@@ -1,7 +1,7 @@
 name: base
 channels:
-  - conda-forge
   - pytorch
+  - conda-forge
   - defaults
 dependencies:
   - python=3.10
@@ -10,7 +10,7 @@ dependencies:
   - numpy
   - scikit-learn
   - seaborn
-  - pytorch::torch
+  - pytorch          
   - pyserial
   - pip
   - pip:
