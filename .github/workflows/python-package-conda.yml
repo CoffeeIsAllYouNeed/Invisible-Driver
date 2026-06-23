@@ -33,6 +33,19 @@ jobs:
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-    - name: Run ML Pipeline Sanity Tests
+    - name: Run ML Pipeline Sanity Tests & Generate Coverage
       run: |
-        pytest test_pipeline.py
+        # Runs pytest and targets the src/ folder for coverage metrics
+        pytest --cov=src test_pipeline.py
+        
+        # Generates the coverage.svg file dynamically
+        coverage-badge -o coverage.svg -f
+
+    - name: Commit and Push Coverage Badge
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add coverage.svg
+        # Keeps the pipeline clean by only committing if the code coverage percentage changed
+        git diff --staged --quiet || git commit -m "Updated code coverage badge"
+        git push

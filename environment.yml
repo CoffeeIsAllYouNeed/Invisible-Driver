@@ -17,3 +17,5 @@ dependencies:
     - fastapi[standard]
     - pytest       
     - httpx        
+    - pytest-cov      
+    - coverage-badge   
