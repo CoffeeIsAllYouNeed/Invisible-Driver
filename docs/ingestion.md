@@ -32,7 +32,7 @@
 * Date-Time format used: %Y-%m-%d %H:%M:%S.%f.<br>
 * The bad value handling is skipped as they are dealt in preprocessing step.<br>
 * For faster processing and efficient memory usage we used C engine in CSV handling to enable low memory option & converted all values to int32.
-* We have used factory design pattern for reproducibility & scalability.
+* We have used factory & strategy design pattern for reproducibility & scalability.
 
 
 ## References: 

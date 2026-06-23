@@ -19,4 +19,3 @@ dependencies:
     - pytest       
     - httpx        
     - pytest-cov      
-    - coverage-badge-py   

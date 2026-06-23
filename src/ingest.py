@@ -1,9 +1,9 @@
 import datetime
 import os
 import time
+from abc import ABC, abstractmethod
 import pandas as pd
 import serial
-from abc import ABC, abstractmethod
 
 
 class DataSource(ABC):
@@ -35,8 +35,6 @@ class SerialSource(DataSource):
     def connect(self):
         try:
             self.ser = serial.Serial(self.port, self.baudrate, timeout=1)
-            # Bootloader requires 1-2 seconds.
-            # For a safer approach, set the sleep time to 5 seconds.
             time.sleep(5)
             return self.ser
         except serial.SerialException as e:
@@ -107,30 +105,17 @@ class SourceProvider:
             return FileSource(
                 filepath=kwargs.get("filepath", "data/signal.parquet")
             )
-        else:
-            raise ValueError(f"Unknown source type: {source_type}")
-
-
-class DataConnect:
-
-    def __init__(self, source_type: str = "serial", **kwargs):
-        self.source = SourceProvider.create_source(source_type, **kwargs)
-
-    def connect(self):
-        return self.source.connect()
-
-    def close(self):
-        self.source.close()
+        raise ValueError(f"Unknown source type: {source_type}")
 
 
 class DataCollect:
 
-    def __init__(self, connection_manager: DataConnect):
-        self.connection_manager = connection_manager
+    def __init__(self, source: DataSource):
+        self.source = source
 
     def collect(self, output_path="data/signal.parquet", max_duration_sec=300):
-        if not self.connection_manager.source.is_open():
-            self.connection_manager.connect()
+        if not self.source.is_open():
+            self.source.connect()
 
         dir_name = os.path.dirname(output_path)
         if dir_name and not os.path.exists(dir_name):
@@ -144,7 +129,7 @@ class DataCollect:
 
             while time.time() - start_time < max_duration_sec:
                 try:
-                    data = self.connection_manager.source.read_line()
+                    data = self.source.read_line()
                 except serial.SerialException as e:
                     raise RuntimeError(
                         f"Error reading from serial port: {e}"
@@ -163,21 +148,21 @@ class DataCollect:
                 df.to_parquet(output_path, engine="pyarrow", compression="snappy", index=False)
 
         finally:
-            self.connection_manager.close()
+            self.source.close()
 
 
 class RawValueYieldStream:
 
-    def __init__(self, connection_manager: DataConnect):
-        self.connection_manager = connection_manager
+    def __init__(self, source: DataSource):
+        self.source = source
 
     def stream(self):
-        if not self.connection_manager.source.is_open():
-            self.connection_manager.connect()
+        if not self.source.is_open():
+            self.source.connect()
             
         while True:
             try:
-                raw_data = self.connection_manager.source.read_line()
+                raw_data = self.source.read_line()
                 
                 if raw_data:
                     actual_val = raw_data.split(",")[0]
@@ -187,8 +172,6 @@ class RawValueYieldStream:
                 raise RuntimeError(
                     f"Serial port disconnected during stream: {e}"
                 )
-            # Bad values will be dealt in preprocessing step.
-            # Hence, we can ignore ValueError.
             except ValueError:
                 continue
             except Exception as e:
@@ -198,9 +181,9 @@ class RawValueYieldStream:
 class Ingestion:
 
     def __init__(self, source_type: str = "serial", **kwargs):
-        self.connection_manager = DataConnect(source_type, **kwargs)
-        self.collector = DataCollect(self.connection_manager)
-        self.streamer = RawValueYieldStream(self.connection_manager)
+        self.source = SourceProvider.create_source(source_type, **kwargs)
+        self.collector = DataCollect(self.source)
+        self.streamer = RawValueYieldStream(self.source)
 
     def collect_data_to_parquet(
         self, output_path="data/signal.parquet", max_duration_sec=300
@@ -211,4 +194,4 @@ class Ingestion:
         yield from self.streamer.stream()
 
     def close(self):
-        self.connection_manager.close()
+        self.source.close()
