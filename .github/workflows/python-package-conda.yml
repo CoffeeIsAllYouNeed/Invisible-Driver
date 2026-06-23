@@ -5,6 +5,11 @@ on: [push]
 jobs:
   build-linux:
     runs-on: ubuntu-latest
+    
+    # Grants the GitHub runner permission to commit and push the badge back to your repo
+    permissions:
+      contents: write
+
     strategy:
       max-parallel: 5
 
