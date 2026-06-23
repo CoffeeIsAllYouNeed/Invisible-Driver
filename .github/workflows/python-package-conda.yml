@@ -43,7 +43,12 @@ jobs:
     - name: Generate Coverage Badge Asset
       run: |
         pip install "setuptools<70.0.0" coverage-badge
-        coverage-badge -f -o coverage.svg
+        
+        # Ensure the img directory exists before saving
+        mkdir -p img
+        
+        # Output the badge directly into the img directory
+        coverage-badge -f -o img/coverage.svg
 
     - name: Commit and Push Coverage Badge
       run: |
@@ -51,7 +56,9 @@ jobs:
         git config --local user.email "vrushalgithub2004@gmail.com"
         git config --local user.name "CoffeeIsAllYouNeed"
         
-        git add coverage.svg
+        # Stage the newly created badge in the img folder
+        git add img/coverage.svg
+        
         # [skip ci] prevents an infinite pipeline loop
-        git diff --staged --quiet || git commit -m "chore: update code coverage badge [skip ci]"
+        git diff --staged --quiet || git commit -m "chore: update code coverage badge in img folder [skip ci]"
         git push
