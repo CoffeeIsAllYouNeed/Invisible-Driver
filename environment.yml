@@ -12,6 +12,7 @@ dependencies:
   - seaborn
   - pytorch
   - pyserial
+  - setuptools
   - pip
   - pip:
     - fastapi[standard]
