@@ -1,0 +1,17 @@
+name: base
+channels:
+  - conda-forge
+  - pytorch
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - pyarrow
+  - numpy
+  - scikit-learn
+  - seaborn
+  - pytorch::torch
+  - pyserial
+  - pip
+  - pip:
+    - fastapi[standard]
