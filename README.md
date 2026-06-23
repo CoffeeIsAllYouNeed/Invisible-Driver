@@ -20,8 +20,12 @@
 <em>Brain Computer Interface to drive video game cars with EEG signals.</em>
 </p>
 
-<br><br>
+<br>
 FOR **DETAILED DOCUMENTATION** VISIT [**HERE**](https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/tree/main/docs)
+
+## Grateful:
+
+❤️ "Invisible Driver" is a now a part of **awesome readme list**. Check [here](https://github.com/matiassingers/awesome-readme).
 
 ## Play Guide: 
 
