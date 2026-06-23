@@ -40,14 +40,11 @@ jobs:
 
     - name: Run ML Pipeline Sanity Tests & Generate Coverage
       run: |
-        # Explicitly install setuptools to fix the legacy pkg_resources issue
-        pip install setuptools
-        
         # Runs pytest and targets the src/ folder for coverage metrics
         pytest --cov=src test_pipeline.py
         
-        # Generates the coverage.svg file dynamically
-        coverage-badge -o coverage.svg -f
+        # Generates the coverage.svg file dynamically using the modern library
+        coverage-badge-py -o coverage.svg
 
     - name: Commit and Push Coverage Badge
       run: |
