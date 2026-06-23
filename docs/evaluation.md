@@ -18,6 +18,9 @@
   <img src="https://img.shields.io/badge/Docs-Available-brightgreen?style=flat" alt="Docs Available" />
 </p>
 
+<p align="center">
+<em>Brain Computer Interface to drive video game cars with EEG signals.</em>
+</p>
 
 ## Results: 
 

@@ -234,7 +234,8 @@ Invisible-Driver/
 ├── requirements.txt         # Dependencies.
 ├── run.py                   # Pipeline run file.
 ├── server.py                # FastAPI server.
-└── test_pipeline.py         # Pipeline tests for CI runner execution.
+├── test_pipeline.py         # Pipeline tests for CI runner execution.
+└── test_unit.py         # Unit tests
 ```
 
 

@@ -9,7 +9,7 @@
 <p align="center">
   <img src="https://github.com/CoffeeIsAllYouNeed/Invisible-Driver/actions/workflows/python-package-conda.yml/badge.svg" alt="Python Package using Conda Status" />
   <img src="https://img.shields.io/badge/Pipeline_Tests-Passing-brightgreen?style=flat&logo=pytest" alt="Pipeline Tests Passing" />
-  <img src="./coverage.svg" alt="Code Coverage" />
+  <img src="../coverage.svg" alt="Code Coverage" />
 </p>
 
 <p align="center">
@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-<em>Brain Computer Interface to drive video game cars with EEG signals.</em> 
+<em>Brain Computer Interface to drive video game cars with EEG signals.</em>
 </p>
 
 ## Data Preprocess: 
