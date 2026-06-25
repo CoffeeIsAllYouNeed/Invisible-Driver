@@ -1,4 +1,4 @@
-![main](../img/header.png)
+![main](../img/header_1.png)
 
 
 <p align="center">

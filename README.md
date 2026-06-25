@@ -1,4 +1,4 @@
-![main](img/header.png)
+![main](img/header_1.png)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue?style=flat&logo=python&logoColor=white" alt="Python" />
