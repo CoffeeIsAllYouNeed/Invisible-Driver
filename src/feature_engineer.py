@@ -26,7 +26,8 @@ class FeatureExtract:
                 "total_2s_variance": np.nanstd(X, axis=1, ddof=1),
                 "total_2s_zcr": np.sum(
                     np.diff(np.signbit(X_center), axis=1), axis=1
-                ) / (X.shape[1] - 1),
+                )
+                / (X.shape[1] - 1),
             },
             index=df_pivot.index,
         )
@@ -58,8 +59,9 @@ class FeatureClean:
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         # Model might misinterpret these extreme fluctuations.
         # Hence, we will drop these values.
-        features = features.replace([np.inf, -np.inf], np.nan).dropna(
-            axis=0, how="any"
+        features = (
+            features.replace([np.inf, -np.inf], np.nan)
+            .dropna(axis=0, how="any")
         )
         cleaned_pivot = df_pivot.loc[features.index].reset_index(drop=True)
         features = features.reset_index(drop=True)
@@ -77,7 +79,9 @@ class FeatureEngineer:
         self, df_pivot: pd.DataFrame
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         try:
-            signal_columns = df_pivot.drop(columns=["timestamp_window"], errors="ignore")
+            signal_columns = df_pivot.drop(
+                columns=["timestamp_window"], errors="ignore"
+            )
             X = signal_columns.values
 
             self.validator.validate(X)
