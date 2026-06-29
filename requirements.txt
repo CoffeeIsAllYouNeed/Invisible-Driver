@@ -6,3 +6,4 @@ seaborn
 torch
 pyserial
 fastapi[standard]
+dvc
