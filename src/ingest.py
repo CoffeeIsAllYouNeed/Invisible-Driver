@@ -6,6 +6,10 @@ import pandas as pd
 import serial
 
 
+# =====================================================================
+# DATA HANDLER LAYER
+# =====================================================================
+
 class DataHandler(ABC):
 
     @abstractmethod
@@ -42,15 +46,15 @@ class ParquetDataHandler(DataHandler):
     def read_data(self, filepath: str) -> pd.DataFrame:
         if not os.path.exists(filepath):
             raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
-        df = pd.read_parquet(
-            filepath,
-            engine="c",
-            low_memory=True,
-            dtype={"value": "Int32"},
-            parse_dates=["timestamp"]
-        )
+        
+        df = pd.read_parquet(filepath)
+        
         if "value" not in df.columns and len(df.columns) > 0:
             df = df.rename(columns={df.columns[0]: "value"})
+            
+        if "value" in df.columns:
+            df["value"] = df["value"].astype("Int32")
+            
         return df
 
 
@@ -66,14 +70,74 @@ class DataHandlerFactory:
             raise ValueError(f"Unsupported file extension for path: {filepath}")
 
 
-class SerialSource:
+# =====================================================================
+# PIPELINE COMPONENTS
+# =====================================================================
 
-    def __init__(self, port="COM6", baudrate=115200):
+class MethodSelect:
+
+    def __init__(self, option: str):
+        self.option = option.strip().lower()
+        if self.option not in ["simulation", "hardware"]:
+            raise ValueError("Selection method must be 'simulation' or 'hardware'")
+
+    def route(self, ctx: dict) -> pd.DataFrame:
+        if self.option == "simulation":
+            return SimulationIngest().process(ctx)
+        else:
+            return HardwareIngest().process(ctx)
+
+
+class SimulationIngest:
+
+    def process(self, ctx: dict) -> pd.DataFrame:
+        filepath = ctx.get("filepath", "../data/data.csv")
+        return CsvDataHandle().execute(filepath)
+
+
+class CsvDataHandle:
+
+    def execute(self, filepath: str) -> pd.DataFrame:
+        handler = DataHandlerFactory.get_handler(filepath)
+        return handler.read_data(filepath)
+
+
+class HardwareIngest:
+
+    def process(self, ctx: dict) -> pd.DataFrame:
+        port = ctx.get("port", "COM6")
+        baudrate = ctx.get("baudrate", 115200)
+        max_duration_sec = ctx.get("max_duration_sec", 300)
+        output_path = ctx.get("output_path", "data/signal.parquet")
+
+        connector = Connect(port, baudrate)
+        ser_connection = connector.establish()
+
+        try:
+            collector = Collect(ser_connection)
+            raw_lines = collector.gather(max_duration_sec)
+
+            decoder = Decode()
+            decoded_lines = decoder.process_batch(raw_lines)
+
+            noise_handler = NoiseHandle()
+            filtered_records = noise_handler.clean_batch(decoded_lines)
+
+            parquet_writer = ParquetDataHandle()
+            return parquet_writer.save_and_convert(filtered_records, output_path)
+
+        finally:
+            connector.close()
+
+
+class Connect:
+
+    def __init__(self, port: str, baudrate: int):
         self.port = port
         self.baudrate = baudrate
         self.ser = None
 
-    def connect(self):
+    def establish(self) -> serial.Serial:
         try:
             self.ser = serial.Serial(self.port, self.baudrate, timeout=1)
             time.sleep(5)
@@ -83,10 +147,46 @@ class SerialSource:
                 f"Connection failure [Serial Port] {self.port}: {e}"
             )
 
-    def read_line(self) -> str:
+    def close(self) -> None:
         if self.ser and self.ser.is_open:
+            self.ser.close()
+
+
+class Collect:
+
+    def __init__(self, ser_connection: serial.Serial):
+        self.ser = ser_connection
+
+    def gather(self, max_duration_sec: int) -> list:
+        if not self.ser or not self.ser.is_open:
+            raise RuntimeError("Serial connection must be open to collect data.")
+
+        raw_lines = []
+        start_time = time.time()
+        print("Data collection [BEGIN]")
+
+        while time.time() - start_time < max_duration_sec:
+            try:
+                line_bytes = self.ser.readline()
+                if line_bytes:
+                    current_time = datetime.datetime.now().strftime(
+                        "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    raw_lines.append((current_time, line_bytes))
+            except serial.SerialException as e:
+                raise RuntimeError(
+                    f"Serial interface disconnected during collection: {e}"
+                )
+        return raw_lines
+
+
+class Decode:
+
+    def process_batch(self, raw_lines: list) -> list:
+        processed_records = []
+        for timestamp, byte_data in raw_lines:
             # NOISE TESTING IN HARDWARE:
-           
+
             # Method-1:
             # Set encoding="latin-1" and disable isdigit() check.
             # It will substitute the noise character with a corresponding latin-1 character.
@@ -97,199 +197,67 @@ class SerialSource:
             # It will substitute  (U+FFFD, the official REPLACEMENT CHARACTER) for decoding errors.
             # Hence, you can see the records with noise.
 
-
             # FOR PIPELINE:
 
             # Use encoding="latin-1", errors="ignore"
             # Latin-1 will decode corrupted byte into a Latin-1 character.
             # The corrupted character will be dropped by isdigit() check.
 
-            return self.ser.readline().decode("latin-1", errors="ignore").strip()
-       
-        return ""
-
-    def is_open(self) -> bool:
-        return self.ser is not None and self.ser.is_open
-
-    def close(self) -> None:
-        if self.ser and self.ser.is_open:
-            self.ser.close()
+            decoded_str = byte_data.decode("latin-1", errors="ignore").strip()
+            processed_records.append((timestamp, decoded_str))
+        return processed_records
 
 
-class FileSource:
+class NoiseHandle:
 
-    def __init__(self, filepath="../data/data.csv"):
-        self.filepath = filepath
-        self.generator = None
-        self._is_connected = False
-
-    def connect(self):
-        handler = DataHandlerFactory.get_handler(self.filepath)
-        df = handler.read_data(self.filepath)
-           
-        self.generator = (str(val) for val in df["value"].values)
-        self._is_connected = True
-
-    def read_line(self) -> str:
-        try:
-            if self.generator:
-                return next(self.generator)
-        except StopIteration:
-            pass
-        return ""
-
-    def is_open(self) -> bool:
-        return self._is_connected
-
-    def close(self) -> None:
-        self._is_connected = False
-        self.generator = None
+    def clean_batch(self, decoded_lines: list) -> list:
+        cleaned_buffer = []
+        for timestamp, text in decoded_lines:
+            values = text.split(",")
+            if len(values) > 0 and values[0]:
+                val_to_check = values[0]
+                if val_to_check.replace('.', '', 1).isdigit():
+                    cleaned_buffer.append(
+                        {"timestamp": timestamp, "value": val_to_check}
+                    )
+        return cleaned_buffer
 
 
-class DataCollect:
+class ParquetDataHandle:
 
-    def __init__(self, source: SerialSource):
-        self.source = source
-
-    def collect(self, output_path="data/signal.parquet", max_duration_sec=300):
-        if not self.source.is_open():
-            self.source.connect()
+    def save_and_convert(self, cleaned_records: list, output_path: str) -> pd.DataFrame:
+        if not cleaned_records:
+            return pd.DataFrame(columns=["timestamp", "value"])
 
         dir_name = os.path.dirname(output_path)
         if dir_name and not os.path.exists(dir_name):
             os.makedirs(dir_name, exist_ok=True)
 
-        data_buffer = []
-
         try:
-            start_time = time.time()
-            print("Data collection [BEGIN]")
-
-            while time.time() - start_time < max_duration_sec:
-                try:
-                    data = self.source.read_line()
-                except serial.SerialException as e:
-                    raise RuntimeError(
-                        f"Connection failure [Serial Port] {self.port}: {e}"
-                    )
-
-                current_time = datetime.datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S.%f"
-                )
-                values = data.split(",")
-
-                if len(values) > 0 and values[0].replace('.', '', 1).isdigit():
-                    data_buffer.append({"timestamp": current_time, "value": values[0]})
-           
-            if data_buffer:
-                df = pd.DataFrame(data_buffer)
-                df.to_parquet(output_path, engine="pyarrow", compression="snappy", index=False)
-
-        finally:
-            self.source.close()
-
-
-class RawValueYieldStream:
-
-    def __init__(self, source: SerialSource):
-        self.source = source
-
-    def stream(self):
-        if not self.source.is_open():
-            self.source.connect()
-           
-        while True:
-            try:
-                raw_data = self.source.read_line()
-               
-                if raw_data:
-                    actual_val = raw_data.split(",")[0]
-                    yield float(actual_val)
-                   
-            except serial.SerialException as e:
-                raise RuntimeError(
-                    f"Serial port disconnected during stream: {e}"
-                )
-            except ValueError:
-                continue
-            except Exception as e:
-                raise RuntimeError(f"Unexpected error during streaming: {e}")
-
-
-class OptionStrategy(ABC):
-
-    @abstractmethod
-    def execute(self, ingestion_instance, source_type: str, **kwargs):
-        pass
-
-
-class SoftwareOptionStrategy(OptionStrategy):
-
-    def execute(self, ingestion_instance, source_type: str, **kwargs):
-        filepath = kwargs.get("filepath", "../data/data.csv")
-        handler = DataHandlerFactory.get_handler(filepath)
-        ingestion_instance.software_data = handler.read_data(filepath)
-
-
-class HardwareOptionStrategy(OptionStrategy):
-
-    def execute(self, ingestion_instance, source_type: str, **kwargs):
-        if source_type.lower() == "serial":
-            ingestion_instance.source = SerialSource(
-                port=kwargs.get("port", "COM6"),
-                baudrate=kwargs.get("baudrate", 115200)
+            df = pd.DataFrame(cleaned_records)
+            df.to_parquet(
+                output_path,
+                engine="pyarrow",
+                compression="snappy",
+                index=False
             )
-        elif source_type.lower() == "file":
-            ingestion_instance.source = FileSource(
-                filepath=kwargs.get("filepath", "../data/data.csv")
-            )
-        else:
-            raise ValueError(f"INVALID source type: {source_type}")
-
-        ingestion_instance.collector = DataCollect(ingestion_instance.source)
-        ingestion_instance.streamer = RawValueYieldStream(ingestion_instance.source)
+            return df
+        except Exception as e:
+            raise IOError(f"Failed to save data to parquet: {e}")
 
 
-class OptionStrategyFactory:
-
-    @staticmethod
-    def get_strategy(option: str) -> OptionStrategy:
-        if option.lower() == "software":
-            return SoftwareOptionStrategy()
-        elif option.lower() == "hardware":
-            return HardwareOptionStrategy()
-        else:
-            raise ValueError("Option must be either 'software' or 'hardware'")
-
+# =====================================================================
+# MAIN PIPELINE CLASS
+# =====================================================================
 
 class Ingestion:
 
-    def __init__(self, option: str, source_type: str = "serial", **kwargs):
-        self.option = option.lower()
-        self.source = None
-        self.collector = None
-        self.streamer = None
-        self.software_data = None
+    def __init__(self, option: str, **kwargs):
+        self.option = option
+        self.ctx = kwargs
 
-        strategy = OptionStrategyFactory.get_strategy(self.option)
-        strategy.execute(self, source_type, **kwargs)
-
-    def collect_data_to_parquet(
-        self, output_path="../data/signal.parquet", max_duration_sec=300
-    ):
-        if self.option == "software":
-            return
-        if self.collector is None:
-            raise RuntimeError("Collector is not initialized for hardware option")
-        self.collector.collect(output_path, max_duration_sec)
-
-    def stream_raw_data(self):
-        if self.option == "software":
-            return
-        if self.streamer is None:
-            raise RuntimeError("Streamer is not initialized for hardware option")
-        yield from self.streamer.stream()
-
-    def close(self):
-        if self.source:
-            self.source.close()
+    def run(self) -> pd.DataFrame:
+        selector = MethodSelect(self.option)
+        df = selector.route(self.ctx)
+        print("INGESTION PIPELINE [COMPLETED]")
+        return df
