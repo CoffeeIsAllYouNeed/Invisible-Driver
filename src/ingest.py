@@ -1,73 +1,8 @@
 import datetime
 import os
 import time
-from abc import ABC, abstractmethod
 import pandas as pd
 import serial
-
-
-# =====================================================================
-# DATA HANDLER LAYER
-# =====================================================================
-
-class DataHandler(ABC):
-
-    @abstractmethod
-    def read_data(self, filepath: str) -> pd.DataFrame:
-        pass
-
-
-class CSVDataHandler(DataHandler):
-
-    def read_data(self, filepath: str) -> pd.DataFrame:
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
-        # CONTEXT:
-        # In practical implementation,setup might produce upto 500 readings/second.
-        # This will require more memory and time to process the data.
-
-        # For fast-processing: Select C-engine.
-        # For low memory usage: Enable low memory and converted all values to int32.
-
-        df = pd.read_csv(
-            filepath_or_buffer=filepath,
-            engine="c",
-            low_memory=True,
-            dtype={"value": "Int32"},
-            parse_dates=["timestamp"]
-        )
-        if "value" not in df.columns and len(df.columns) > 0:
-            df = df.rename(columns={df.columns[0]: "value"})
-        return df
-
-
-class ParquetDataHandler(DataHandler):
-
-    def read_data(self, filepath: str) -> pd.DataFrame:
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
-        
-        df = pd.read_parquet(filepath)
-        
-        if "value" not in df.columns and len(df.columns) > 0:
-            df = df.rename(columns={df.columns[0]: "value"})
-            
-        if "value" in df.columns:
-            df["value"] = df["value"].astype("Int32")
-            
-        return df
-
-
-class DataHandlerFactory:
-
-    @staticmethod
-    def get_handler(filepath: str) -> DataHandler:
-        if filepath.endswith(".csv"):
-            return CSVDataHandler()
-        elif filepath.endswith(".parquet"):
-            return ParquetDataHandler()
-        else:
-            raise ValueError(f"Unsupported file extension for path: {filepath}")
 
 
 # =====================================================================
@@ -75,12 +10,16 @@ class DataHandlerFactory:
 # =====================================================================
 
 class MethodSelect:
+    # At the game interface, user has two options: 
+    # (a) Simulation (If user doesn't have hardware setup)
+    # (b) Hardware (If user has hardware setup)
 
     def __init__(self, option: str):
         self.option = option.strip().lower()
         if self.option not in ["simulation", "hardware"]:
-            raise ValueError("Selection method must be 'simulation' or 'hardware'")
-
+            raise ValueError("METHOD SELECTION ERROR: \n" 
+            "CHOOSE 'simulation' OR 'hardware'.")
+        
     def route(self, ctx: dict) -> pd.DataFrame:
         if self.option == "simulation":
             return SimulationIngest().process(ctx)
@@ -98,8 +37,46 @@ class SimulationIngest:
 class CsvDataHandle:
 
     def execute(self, filepath: str) -> pd.DataFrame:
-        handler = DataHandlerFactory.get_handler(filepath)
-        return handler.read_data(filepath)
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
+        # CONTEXT:
+        # In practical implementation,setup might produce upto 500 readings/second.
+        # This will require more memory and time to process the data.
+
+        # For fast-processing: Select C-engine.
+        # For low memory usage: Enable low memory and converted all values to int32.
+
+        df = pd.read_csv(
+            filepath_or_buffer=filepath,
+            engine="c",
+            low_memory=True,
+            dtype={"value": "Int32"},
+            parse_dates=["timestamp"]
+        )
+        return df
+
+
+class ParquetDataHandle:
+
+    def execute(self, filepath: str) -> pd.DataFrame:
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
+        # CONTEXT:
+        # In practical implementation,setup might produce upto 500 readings/second.
+        # This will require more memory and time to process the data.
+       
+        # For fast-processing: Select pyarrow-engine.
+        # For low memory usage: Converted all values to int32.
+        
+        df = pd.read_parquet(
+            path=filepath,
+            engine="pyarrow"
+        )
+        
+        if "value" in df.columns:
+            df["value"] = df["value"].astype("Int32")
+            
+        return df
 
 
 class HardwareIngest:
@@ -107,8 +84,11 @@ class HardwareIngest:
     def process(self, ctx: dict) -> pd.DataFrame:
         port = ctx.get("port", "COM6")
         baudrate = ctx.get("baudrate", 115200)
+        # DATA COLLECTION TIME LIMIT: 
+        # Adjust as per requirements.
+        # We have used 5 minutes (300 seconds) as default.
         max_duration_sec = ctx.get("max_duration_sec", 300)
-        output_path = ctx.get("output_path", "data/signal.parquet")
+        output_path = ctx.get("output_path", "../data/signal.parquet")
 
         connector = Connect(port, baudrate)
         ser_connection = connector.establish()
@@ -123,8 +103,8 @@ class HardwareIngest:
             noise_handler = NoiseHandle()
             filtered_records = noise_handler.clean_batch(decoded_lines)
 
-            parquet_writer = ParquetDataHandle()
-            return parquet_writer.save_and_convert(filtered_records, output_path)
+            storage_writer = Store()
+            return storage_writer.save_and_convert(filtered_records, output_path)
 
         finally:
             connector.close()
@@ -140,6 +120,15 @@ class Connect:
     def establish(self) -> serial.Serial:
         try:
             self.ser = serial.Serial(self.port, self.baudrate, timeout=1)
+            # BOOTLOADER INTIALIZATION TIME:
+            
+            # FOR MODERN ARDUINO:
+            # Modern Arduino's bootloader normally finishes initializing in 1 to 2 seconds
+            # 5-second delay is implemented as a safety margin.
+
+            # FOR OLDER ARDUINO:
+            # Older Arduino's bootloader might take around 4 to 8 seconds to initialize. 
+            # Extend the sleep time to 10 seconds in that case. 
             time.sleep(5)
             return self.ser
         except serial.SerialException as e:
@@ -223,7 +212,7 @@ class NoiseHandle:
         return cleaned_buffer
 
 
-class ParquetDataHandle:
+class Store:
 
     def save_and_convert(self, cleaned_records: list, output_path: str) -> pd.DataFrame:
         if not cleaned_records:
