@@ -22,14 +22,15 @@ def main() -> None:
     reproducible_pipeline = Reproducible()
     reproducible_pipeline.set_seed(42)
 
+    # ALIGNED WITH YOUR NEW INGESTION REQUIREMENTS ("hardware" or "simulation")
     if OPTION == "a":
         print("Starting pipeline: Ingesting from Hardware (Serial Stream)...")
         ingestion = Ingestion(
-            source_type="serial", port="COM6", baudrate=115200
+            option="hardware", port="COM6", baudrate=115200
         )
     elif OPTION == "b":
         print("Starting pipeline: Ingesting from File (data/data.csv)...")
-        ingestion = Ingestion(source_type="file", filepath=DATA_CSV_PATH)
+        ingestion = Ingestion(option="simulation", filepath=DATA_CSV_PATH)
     else:
         raise ValueError(
             f"Unknown pipeline option: '{OPTION}'. Select 'a' or 'b'."

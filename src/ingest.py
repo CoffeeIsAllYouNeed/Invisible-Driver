@@ -235,6 +235,41 @@ class Store:
             raise IOError(f"Failed to save data to parquet: {e}")
 
 
+class FetchBatch:
+
+    def __init__(self, option: str, ctx: dict):
+        self.option = option.strip().lower()
+        self.ctx = ctx
+        self.connector = None
+
+    def stream_raw_data(self):
+        if self.option == "simulation":
+            filepath = self.ctx.get("filepath", "data/data.csv")
+            if not os.path.exists(filepath):
+                raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
+            df = pd.read_csv(filepath, engine="c", low_memory=True)
+            for _, row in df.iterrows():
+                yield row["value"]
+        elif self.option == "hardware":
+            port = self.ctx.get("port", "COM6")
+            baudrate = self.ctx.get("baudrate", 115200)
+            self.connector = Connect(port, baudrate)
+            ser_connection = self.connector.establish()
+            decoder = Decode()
+            noise_handler = NoiseHandle()
+            while True:
+                line_bytes = ser_connection.readline()
+                if line_bytes:
+                    decoded = decoder.process_batch([("now", line_bytes)])
+                    cleaned = noise_handler.clean_batch(decoded)
+                    if cleaned:
+                        yield cleaned[0]["value"]
+
+    def close(self) -> None:
+        if self.connector:
+            self.connector.close()
+
+
 # =====================================================================
 # MAIN PIPELINE CLASS
 # =====================================================================
@@ -244,9 +279,16 @@ class Ingestion:
     def __init__(self, option: str, **kwargs):
         self.option = option
         self.ctx = kwargs
+        self.batch_fetcher = FetchBatch(self.option, self.ctx)
 
     def run(self) -> pd.DataFrame:
         selector = MethodSelect(self.option)
         df = selector.route(self.ctx)
-        print("INGESTION PIPELINE [COMPLETED]")
+        print("INGESTION STEP [COMPLETED]")
         return df
+
+    def stream_raw_data(self):
+        return self.batch_fetcher.stream_raw_data()
+
+    def close(self) -> None:
+        self.batch_fetcher.close()
