@@ -19,28 +19,39 @@ TIME_WINDOW_SEC = 2.0
 
 
 def main() -> None:
+    print("Set seeds [BEGIN]")
     reproducible_pipeline = Reproducible()
     reproducible_pipeline.set_seed(42)
+    print("Set seeds [END]")
 
-    # ALIGNED WITH YOUR NEW INGESTION REQUIREMENTS ("hardware" or "simulation")
     if OPTION == "a":
-        print("Starting pipeline: Ingesting from Hardware (Serial Stream)...")
+        print("Hardware Ingestion [BEGIN]")
         ingestion = Ingestion(
             option="hardware", port="COM6", baudrate=115200
         )
+        print("Hardware Ingestion [END]")
     elif OPTION == "b":
-        print("Starting pipeline: Ingesting from File (data/data.csv)...")
+        print("Simulation Ingestion [BEGIN]")
         ingestion = Ingestion(option="simulation", filepath=DATA_CSV_PATH)
+        print("Simulation Ingestion [END]")
     else:
         raise ValueError(
             f"Unknown pipeline option: '{OPTION}'. Select 'a' or 'b'."
         )
 
+    print("Preprocessing [BEGIN]")
     preprocess_layer = Preprocess()
+    print("Preprocessing [END]")
+
+    print("Feature Engineering [BEGIN]")
     feature_layer = FeatureEngineer()
+    print("Feature Engineering [END]")
+
+    print("Prediction [BEGIN]")
     prediction_layer = Predict()
 
     prediction_layer.load_prediction_engine(model_path=MODEL_PATH)
+    print("Prediction [END]")
 
     print(f"\n--- Running Pipeline Inferences (Window: {TIME_WINDOW_SEC}s) ---")
 

@@ -1,31 +1,43 @@
 import os
 import random
 import numpy as np
+from abc import ABC, abstractmethod
 
 
-class Reproducible:
+class SetAnySeed(ABC):
 
-    def _set_os_environment_seed(self, seed: int) -> None:
+    @abstractmethod
+    def set(self, seed: int | float | str | bytes | bytearray | None) -> None:
+        pass
+
+
+class SetOSEnvironmentSeed(SetAnySeed):
+
+    def set(self, seed: int | float | str | bytes | bytearray | None) -> None:
         os.environ["PYTHONHASHSEED"] = str(seed)
 
-    def _set_random_seed(self, seed: int) -> None:
+
+class SetRandomSeed(SetAnySeed):
+
+    def set(self, seed: int | float | str | bytes | bytearray | None) -> None:
         random.seed(seed)
 
-    def _set_numpy_seed(self, seed: int) -> None:
+
+class SetNumpySeed(SetAnySeed):
+
+    def set(self, seed: int | float | str | bytes | bytearray | None) -> None:
         np.random.seed(seed)
-    
-    # Why seed is set to 42? Thanks to "The Hitchhiker's Guide to the Galaxy".
-    # Change as per your requirement.
-    def set_seed(self, seed: int = 42) -> None:
-        try:
-            self._set_os_environment_seed(seed)
-        except Exception as e:
-            raise RuntimeError(f"Seed Allotment Failure [OS Environment]: {e}")
-        try:
-            self._set_random_seed(seed)
-        except Exception as e:
-            raise RuntimeError(f"Seed Allotment Failure [Random]: {e}")
-        try:
-            self._set_numpy_seed(seed)
-        except Exception as e:
-            raise RuntimeError(f"Seed Allotment Failure [NumPy]: {e}")
+
+
+class SetAllSeeds:
+
+    def __init__(self) -> None:
+        self.seeding_methods: list[SetAnySeed] = [
+            SetOSEnvironmentSeed(),
+            SetRandomSeed(),
+            SetNumpySeed(),
+        ]
+
+    def set_seed(self, seed: int | float | str | bytes | bytearray | None) -> None:
+        for method in self.seeding_methods:
+            method.set(seed)
