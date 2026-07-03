@@ -45,7 +45,7 @@ def main() -> None:
     print(f"\n--- Running Pipeline Inferences (Window: {TIME_WINDOW_SEC}s) ---")
 
     try:
-        raw_stream = ingestion.stream_raw_data()
+        raw_stream = ingestion.run()
 
         while True:
             window_buffer = []
@@ -91,7 +91,6 @@ def main() -> None:
     except KeyboardInterrupt:
         print("\nPipeline execution stopped manually.")
     finally:
-        ingestion.close()
         print("Pipeline streaming channels disconnected.")
 
 

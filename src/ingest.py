@@ -20,7 +20,7 @@ class MethodSelect:
             raise ValueError("METHOD SELECTION ERROR: \n" 
             "CHOOSE 'simulation' OR 'hardware'.")
         
-    def route(self, ctx: dict) -> pd.DataFrame:
+    def route(self, ctx: dict):
         if self.option == "simulation":
             return SimulationIngest().process(ctx)
         else:
@@ -29,9 +29,13 @@ class MethodSelect:
 
 class SimulationIngest:
 
-    def process(self, ctx: dict) -> pd.DataFrame:
+    def process(self, ctx: dict):
         filepath = ctx.get("filepath", "../data/data.csv")
-        return CsvDataHandle().execute(filepath)
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
+        df = pd.read_csv(filepath, engine="c", low_memory=True)
+        for _, row in df.iterrows():
+            yield row["value"]
 
 
 class CsvDataHandle:
@@ -81,7 +85,11 @@ class ParquetDataHandle:
 
 class HardwareIngest:
 
-    def process(self, ctx: dict) -> pd.DataFrame:
+    def __init__(self):
+        self.connector = None
+        self.historical_records = []
+
+    def process(self, ctx: dict):
         port = ctx.get("port", "COM6")
         baudrate = ctx.get("baudrate", 115200)
         # DATA COLLECTION TIME LIMIT: 
@@ -90,24 +98,40 @@ class HardwareIngest:
         max_duration_sec = ctx.get("max_duration_sec", 300)
         output_path = ctx.get("output_path", "../data/signal.parquet")
 
-        connector = Connect(port, baudrate)
-        ser_connection = connector.establish()
+        self.connector = Connect(port, baudrate)
+        ser_connection = self.connector.establish()
+
+        decoder = Decode()
+        noise_handler = NoiseHandle()
+        storage_writer = Store()
+
+        start_time = time.time()
 
         try:
-            collector = Collect(ser_connection)
-            raw_lines = collector.gather(max_duration_sec)
-
-            decoder = Decode()
-            decoded_lines = decoder.process_batch(raw_lines)
-
-            noise_handler = NoiseHandle()
-            filtered_records = noise_handler.clean_batch(decoded_lines)
-
-            storage_writer = Store()
-            return storage_writer.save_and_convert(filtered_records, output_path)
-
+            while time.time() - start_time < max_duration_sec:
+                try:
+                    line_bytes = ser_connection.readline()
+                    if line_bytes:
+                        current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+                        decoded_lines = decoder.process_batch([(current_time, line_bytes)])
+                        filtered_records = noise_handler.clean_batch(decoded_lines)
+                        
+                        if filtered_records:
+                            val_to_yield = filtered_records[0]["value"]
+                            self.historical_records.append({"timestamp": current_time, "value": val_to_yield})
+                            
+                            storage_writer.save_and_convert(self.historical_records, output_path)
+                            yield val_to_yield
+                except serial.SerialException as e:
+                    raise RuntimeError(
+                        f"Serial interface disconnected during collection: {e}"
+                    )
         finally:
-            connector.close()
+            self.close()
+
+    def close(self) -> None:
+        if self.connector:
+            self.connector.close()
 
 
 class Connect:
@@ -235,41 +259,6 @@ class Store:
             raise IOError(f"Failed to save data to parquet: {e}")
 
 
-class FetchBatch:
-
-    def __init__(self, option: str, ctx: dict):
-        self.option = option.strip().lower()
-        self.ctx = ctx
-        self.connector = None
-
-    def stream_raw_data(self):
-        if self.option == "simulation":
-            filepath = self.ctx.get("filepath", "data/data.csv")
-            if not os.path.exists(filepath):
-                raise FileNotFoundError(f"DATA FILE NOT FOUND: {filepath}")
-            df = pd.read_csv(filepath, engine="c", low_memory=True)
-            for _, row in df.iterrows():
-                yield row["value"]
-        elif self.option == "hardware":
-            port = self.ctx.get("port", "COM6")
-            baudrate = self.ctx.get("baudrate", 115200)
-            self.connector = Connect(port, baudrate)
-            ser_connection = self.connector.establish()
-            decoder = Decode()
-            noise_handler = NoiseHandle()
-            while True:
-                line_bytes = ser_connection.readline()
-                if line_bytes:
-                    decoded = decoder.process_batch([("now", line_bytes)])
-                    cleaned = noise_handler.clean_batch(decoded)
-                    if cleaned:
-                        yield cleaned[0]["value"]
-
-    def close(self) -> None:
-        if self.connector:
-            self.connector.close()
-
-
 # =====================================================================
 # MAIN PIPELINE CLASS
 # =====================================================================
@@ -277,18 +266,9 @@ class FetchBatch:
 class Ingestion:
 
     def __init__(self, option: str, **kwargs):
-        self.option = option
+        self.option = option.strip().lower()
         self.ctx = kwargs
-        self.batch_fetcher = FetchBatch(self.option, self.ctx)
 
-    def run(self) -> pd.DataFrame:
+    def run(self):
         selector = MethodSelect(self.option)
-        df = selector.route(self.ctx)
-        print("INGESTION STEP [COMPLETED]")
-        return df
-
-    def stream_raw_data(self):
-        return self.batch_fetcher.stream_raw_data()
-
-    def close(self) -> None:
-        self.batch_fetcher.close()
+        return selector.route(self.ctx)
