@@ -1,7 +1,6 @@
 
-
 from abc import ABC, abstractmethod
-from typing import Dict, Type
+from typing import Dict, Type, Any
 import serial.tools.list_ports
 import time 
 
@@ -74,22 +73,115 @@ def _clean_string(method_name: str) -> str:
 def _check_input(
         input_name: str, 
         input_val, 
+        is_empty_allowed: bool,
         allowed_inputs: list, 
-        allowed_dtypes: list
+        allowed_dtypes: list, 
+        min_val: int | float,
+        max_val: int | float
         ) -> None: 
-    if (input_val is None or input_val == "") and (None not in allowed_dtypes): 
+    # how to make allowed inputs optional here.
+    if (input_val is None or input_val == "") and (is_empty_allowed == False): 
         raise ValueError(f"{input_name} cannot be empty!")
     
-    if not isinstance(input_val, tuple(allowed_dtypes)):
-        _display_valid_inputs(input_name, allowed_dtypes)
-        raise TypeError(f"{input_name} has invalid data type. FOR VALID DATA-TYPES SCROLL UP.")
+    if len(allowed_dtypes):
+        if not isinstance(input_val, tuple(allowed_dtypes)):
+            _display_valid_inputs(input_name, allowed_dtypes)
+            raise TypeError(f"{input_name} has invalid data type. FOR VALID DATA-TYPES SCROLL UP.")
     
     clean_input = _clean_string(input_val) if isinstance(input_val, str) else input_val
-    clean_allowed_inputs = [_clean_string(x) if isinstance(x, str) else x for x in allowed_inputs]
+    
+    if len(allowed_inputs): 
+        clean_allowed_inputs = [_clean_string(x) if isinstance(x, str) else x for x in allowed_inputs]
 
-    if clean_input not in clean_allowed_inputs: 
-        _display_valid_inputs(input_name, allowed_inputs)
-        raise ValueError(f"'{input_val}' is invalid {input_name}.")
+        if clean_input not in clean_allowed_inputs: 
+            _display_valid_inputs(input_name, allowed_inputs)
+            raise ValueError(f"'{input_val}' is invalid {input_name}.")
+
+#--------------------------CHECK EMPTY INPUT-----------------------------#
+
+def _handle_empty_input(
+    input_name: str, 
+    input_value: Any, 
+    is_empty_allowed: bool, 
+    default_input_value: Any = None
+) -> Any: 
+    
+    if input_value is not None:
+        return input_value
+
+    if is_empty_allowed:
+        return default_input_value
+        
+    raise ValueError(f"'{input_name}' cannot be empty or None!")
+        
+
+#--------------------------CHECK DATA RANGE-----------------------------#
+
+def _handle_input_range(
+    input_name: str, 
+    input_value: int | float , 
+    min_input_value: int | float,
+    max_input_value: int | float
+) -> int | float:
+    
+    if  min_input_value <= input_value <= max_input_value: 
+        return input_value
+
+    if input_value < min_input_value: 
+        raise ValueError(f"Minimum {input_name} should be {min_input_value}.")
+    
+    raise ValueError(f"Maximum {input_name} should be {max_input_value}.")
+
+
+#--------------------------CHECK ALLOWED INPUT VALUES-----------------------------#
+    
+
+
+
+#--------------------------CHECK INPUT-----------------------------#
+
+def _check_input(
+        input_name: str, 
+        input_value, 
+        is_empty_allowed: bool,
+        allowed_inputs: list, 
+        allowed_dtypes: list, 
+        min_val: int | float,
+        max_val: int | float,
+        default_input_value: Any
+        ) -> None: 
+    
+    non_empty_input_value = _handle_empty_input(
+        input_name,
+        input_value,
+        is_empty_allowed,
+        default_input_value
+    )
+    # Assuming the user's input data type is right !
+    valid_input_value = _handle_input_validity(
+
+    )
+    
+    if len(allowed_dtypes):
+        if not isinstance(input_val, tuple(allowed_dtypes)):
+            _display_valid_inputs(input_name, allowed_dtypes)
+            raise TypeError(f"{input_name} has invalid data type. FOR VALID DATA-TYPES SCROLL UP.")
+    
+    clean_input = _clean_string(input_val) if isinstance(input_val, str) else input_val
+    
+    if len(allowed_inputs): 
+        clean_allowed_inputs = [_clean_string(x) if isinstance(x, str) else x for x in allowed_inputs]
+
+        if clean_input not in clean_allowed_inputs: 
+            _display_valid_inputs(input_name, allowed_inputs)
+            raise ValueError(f"'{input_val}' is invalid {input_name}.")
+        
+
+
+
+
+
+
 
 
 def _display_valid_inputs(input_name: str, allowed_inputs: list) -> None:
@@ -104,7 +196,7 @@ def _display_valid_inputs(input_name: str, allowed_inputs: list) -> None:
             print(f"{i+1}] {allowed_input}")
 
 
-def _set_bootloader(boot_init_duration: int | float) -> None: 
+def _set_boot_loader_duration(boot_init_duration: int | float) -> None: 
     # BOOTLOADER INTIALIZATION TIME:          
             # 1] FOR MODERN ARDUINO:
                 # Modern Arduino's bootloader normally finishes initializing in 1 to 2 seconds
