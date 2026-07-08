@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from typing import Dict, Type, Any
 import serial.tools.list_ports
