@@ -1,5 +1,3 @@
-# Wrong code 
-# Should I add other string handling code? 
 import os
 import random
 import numpy as np
